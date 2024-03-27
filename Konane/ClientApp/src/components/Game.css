@@ -1,0 +1,58 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.game {
+    width: 70vw;
+    height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board8 {
+    width: calc(64px * 8);
+    height: calc(64px * 8);
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.cell {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.black {
+    background-color: bisque;
+}
+
+.white {
+    background-color: deepskyblue;
+}
+
+.selected {
+    background-color: brown;
+}
+
+.available-cell {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    background-color: chartreuse;
+}
+
+.available-figure {
+    background-color: chartreuse;
+}
+
+.player-turn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5%;
+}
