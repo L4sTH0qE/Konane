@@ -7,7 +7,7 @@ export class Board
 {
     constructor(size)
     {
-        this._size = size;
+        this._size = size !== null ? size : 8;
         const cells = []
         for (let i = 0; i < size; ++i)
         {

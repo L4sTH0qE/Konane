@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useState} from 'react';
+import React, {Component} from 'react';
 import BoardComponent from "./BoardComponent";
 import {Board} from "../models/Board";
 import {Player} from "../models/Player";
@@ -33,7 +33,7 @@ export class Game extends Component {
             gameOver: false,
             redirect: false
         });
-        const newBoard = new Board(6);
+        const newBoard = new Board(this.props.size);
         const newWhitePlayer = new Player (Colors.WHITE);
         const newBlackPlayer = new Player (Colors.BLACK);
         this.setWhitePlayer(newWhitePlayer);
