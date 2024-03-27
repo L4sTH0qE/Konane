@@ -2,21 +2,18 @@ import React, {Component, useEffect, useState} from 'react';
 import BoardComponent from "./BoardComponent";
 import {Board} from "../models/Board";
 import {Player} from "../models/Player";
+import {Navigate} from "react-router-dom"
 import "./Game.css"
-import { useNavigate } from "react-router-dom";
-import CellComponent from "./CellComponent";
 import {Colors} from "../models/Colors";
-import {Cell} from "../models/Cell";
 import logo_white from "../assets/checkers_top_white.png";
 import logo_black from "../assets/checkers_top_black.png";
-import {NavItem, NavLink} from "reactstrap";
-import {Link} from "react-router-dom";
 
 export class Game extends Component {
+    
     static displayName = Game.name;
     constructor(props) {
         super(props);
-        this.state = {board: Board, whitePlayer: Player, blackPlayer: Player, currentPlayer: Player, winner: Player, gameOver: Boolean};
+        this.state = {board: Board, whitePlayer: Player, blackPlayer: Player, currentPlayer: Player, winner: Player, gameOver: Boolean, redirect: Boolean};
         this.restart = this.restart.bind(this);
         this.setBoard = this.setBoard.bind(this);
         this.setWhitePlayer = this.setWhitePlayer.bind(this);
@@ -33,7 +30,8 @@ export class Game extends Component {
     
     restart() {
         this.setState({
-            gameOver: false
+            gameOver: false,
+            redirect: false
         });
         const newBoard = new Board(6);
         const newWhitePlayer = new Player (Colors.WHITE);
@@ -62,19 +60,19 @@ export class Game extends Component {
                 <div className="div" id="div1-1">
                     <h3>Game over!<br/> Winner is: {this.state.winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3><br/>
                     <div className="custom">
-
                         <button className="btn btn-primary end-btn-left" onClick={this.restart}>Play again</button>
                         <button className="btn btn-primary end-btn-right" onClick={this.goToHomePage}>Go to Home</button>
-
+                        {this.state.redirect === true ? <Navigate to='/' replace={true}/> : null}
                     </div>
                 </div>
             </div>
         );
     }
     
-    goToHomePage() {
-        let path = "/";
-        this.state.navigate(path);
+    goToHomePage = ()=>{
+        this.setState({
+            redirect: true
+        });
     }
     
     setBoard(newBoard) {
@@ -103,7 +101,7 @@ export class Game extends Component {
 
     render() {
         return (
-            <body>
+            <div>
             {this.state.gameOver ? this.modalEnd() : null}
             <div className="game">
                 <BoardComponent
@@ -114,7 +112,7 @@ export class Game extends Component {
                     endGame={this.endGame}
                 />
             </div>
-            </body>
+            </div>
         );
     }
 }
