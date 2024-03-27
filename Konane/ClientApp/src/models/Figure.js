@@ -15,11 +15,10 @@ export class Figure
         this._cell = cell;
         this._cell._figure = this;
         this._id = Math.random();
-        this._isFirstStep = true;
     }
     
     canMove(target) {
-        if (target._figure?._color === this._color) {
+        if (target._figure !== null) {
             return false;
         }
         if (this._cell.isEmptyVertical(target)) {
@@ -34,6 +33,4 @@ export class Figure
     moveFigure(target) {
         this._isFirstStep = false;
     }
-    
-    
 }

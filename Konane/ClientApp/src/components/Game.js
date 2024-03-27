@@ -3,21 +3,28 @@ import BoardComponent from "./BoardComponent";
 import {Board} from "../models/Board";
 import {Player} from "../models/Player";
 import "./Game.css"
+import { useNavigate } from "react-router-dom";
 import CellComponent from "./CellComponent";
 import {Colors} from "../models/Colors";
 import {Cell} from "../models/Cell";
+import logo_white from "../assets/checkers_top_white.png";
+import logo_black from "../assets/checkers_top_black.png";
+import {NavItem, NavLink} from "reactstrap";
+import {Link} from "react-router-dom";
 
 export class Game extends Component {
     static displayName = Game.name;
     constructor(props) {
         super(props);
-        this.state = {board: Board, whitePlayer: Player, blackPlayer: Player, currentPlayer: Player};
+        this.state = {board: Board, whitePlayer: Player, blackPlayer: Player, currentPlayer: Player, winner: Player, gameOver: Boolean};
         this.restart = this.restart.bind(this);
         this.setBoard = this.setBoard.bind(this);
         this.setWhitePlayer = this.setWhitePlayer.bind(this);
         this.setBlackPlayer = this.setBlackPlayer.bind(this);
         this.setCurrentPlayer = this.setCurrentPlayer.bind(this);
         this.swapPlayers = this.swapPlayers.bind(this);
+        this.endGame = this.endGame.bind(this);
+        this.goToHomePage = this.goToHomePage.bind(this);
     }
 
     componentDidMount() {
@@ -25,18 +32,49 @@ export class Game extends Component {
     }
     
     restart() {
-        const newBoard = new Board(8);
+        this.setState({
+            gameOver: false
+        });
+        const newBoard = new Board(6);
         const newWhitePlayer = new Player (Colors.WHITE);
         const newBlackPlayer = new Player (Colors.BLACK);
-        newBoard.addFigures();
-        this.setBoard(newBoard);
         this.setWhitePlayer(newWhitePlayer);
         this.setBlackPlayer(newBlackPlayer);
         this.setCurrentPlayer(newBlackPlayer)
+        newBoard.addFigures();
+        newBoard.highlightCellsToChoose(newBlackPlayer);
+        this.setBoard(newBoard);
     }
 
     swapPlayers() {
         this.setCurrentPlayer(this.state.currentPlayer._color === Colors.WHITE ? this.state.blackPlayer : this.state.whitePlayer);
+    }
+
+    endGame(currentPlayer) {
+        this.setState({
+            winner: currentPlayer === this.state.blackPlayer ? this.state.whitePlayer : this.state.blackPlayer,
+            gameOver: true
+        });
+    }
+    modalEnd = ()=>{
+        return(
+            <div className="div" id="div1">
+                <div className="div" id="div1-1">
+                    <h3>Game over!<br/> Winner is: {this.state.winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3><br/>
+                    <div className="custom">
+
+                        <button className="btn btn-primary end-btn-left" onClick={this.restart}>Play again</button>
+                        <button className="btn btn-primary end-btn-right" onClick={this.goToHomePage}>Go to Home</button>
+
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    
+    goToHomePage() {
+        let path = "/";
+        this.state.navigate(path);
     }
     
     setBoard(newBoard) {
@@ -65,14 +103,18 @@ export class Game extends Component {
 
     render() {
         return (
+            <body>
+            {this.state.gameOver ? this.modalEnd() : null}
             <div className="game">
-                <BoardComponent 
-                    board={this.state.board} 
-                    setBoard={this.setBoard} 
-                    currentPlayer={this.state.currentPlayer} 
+                <BoardComponent
+                    board={this.state.board}
+                    setBoard={this.setBoard}
+                    currentPlayer={this.state.currentPlayer}
                     swapPlayers={this.swapPlayers}
+                    endGame={this.endGame}
                 />
             </div>
+            </body>
         );
     }
 }
