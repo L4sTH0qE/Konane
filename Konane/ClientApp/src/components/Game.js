@@ -56,9 +56,9 @@ export class Game extends Component {
     }
     modalEnd = ()=>{
         return(
-            <div className="div" id="div1">
-                <div className="div" id="div1-1">
-                    <h3>Game over!<br/> Winner is: {this.state.winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3><br/>
+            <div className="myModal" >
+                <div className="myModalContent">
+                    <h3>Game over!<br/> Winner is: {this.state.winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
                     <div className="custom">
                         <button className="btn btn-primary end-btn-left" onClick={this.restart}>Play again</button>
                         <button className="btn btn-primary end-btn-right" onClick={this.goToHomePage}>Go to Home</button>
