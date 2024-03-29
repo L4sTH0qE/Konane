@@ -1,20 +1,24 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {TextField} from "@mui/material";
 import CustomDialog from "./CustomDialog";
-import {connection, addUser} from './Connection';
+
 export class Home extends Component {
   static displayName = Home.name;
     
     constructor(props) {
         super(props);
-        this.state = {username: String, usernameSubmitted: Boolean, user: String};
+        this.state = {username: String, usernameSubmitted: Boolean, user: String, wins: Number};
         this.setUsername = this.setUsername.bind(this);
         this.setUsernameSubmitted = this.setUsernameSubmitted.bind(this);
+        this.addUser = this.addUser.bind(this);
         this.getUser = this.getUser.bind(this);
+        this.setWins = this.setWins.bind(this);
     }
 
     componentDidMount() {
-        this.setUsername('');
+        this.setUsername(undefined || this.props.username);
+        console.log(this.props.username);
+        this.setWins(0);
         this.setUsernameSubmitted(false);
     }
     
@@ -29,45 +33,40 @@ export class Home extends Component {
             usernameSubmitted: usernameSubmitted
         });
     }
+
+    setWins(wins) {
+        this.setState({
+            wins: wins
+        });
+    }
     
-    getUser() {
-        
+    addUser(name) {
+        fetch('/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: name })
+        });
+        console.log("UserPost");
+    }
+
+    getUser(name) {
+        this.state.user = fetch('/user?name=' + name);
+        this.setWins(this.state.user.wins);
+        console.log("UserGet");
     }
   
   render() {
     return (
       <>
-          <CustomDialog
-              open={!this.state.usernameSubmitted} // leave open if username has not been selected
-              title="Pick a username" // Title of dialog
-              contentText="Please select a username" // content text of dialog
-              handleContinue={() => { // fired when continue is clicked
-                  if (!this.state.username) return; // if username hasn't been entered, do nothing
-
-                  this.setUsernameSubmitted(true); // indicate that username has been submitted
-              }}
-          >
-              <TextField // Input
-                  autoFocus // automatically set focus on input (make it active).
-                  margin="dense"
-                  id="username"
-                  label="Username"
-                  name="username"
-                  value={this.state.username}
-                  required
-                  onChange={(e) => this.setUsername(e.target.value)} // update username state with value
-                  type="text"
-                  fullWidth
-                  variant="standard"
-              />
-          </CustomDialog>
-        <h1>Hello, stranger!</h1>
+        <h1>Hello, {this.state.username === undefined ? "stranger" : this.state.username}! Your victories: {this.state.wins}</h1>
         <p>This site is designed to provide its visitors with the best Konane experience they could ever have in their life!</p>
         <p>To help you get started, here are descriptions of navigation links:</p>
         <ul>
-          <li><strong>Home</strong>. For example, click <em>Counter</em> then <em>Back</em> to return here.</li>
-          <li><strong>Rules</strong>. In development mode, the development server from <code>create-react-app</code> runs in the background automatically, so your client-side resources are dynamically built on demand and the page refreshes when you modify any file.</li>
-          <li><strong>Play</strong>. In production mode, development-time features are disabled, and your <code>dotnet publish</code> configuration produces minified, efficiently bundled JavaScript files.</li>
+          <li><strong>Home</strong>. This is your start page. Here you can checkout your current profile name, stats and general info about this webapp.</li>
+          <li><strong>Rules</strong>. The page that demonstrates the history of origin and the rules of the Konane board game. It shall also include a manual in the nearest future.</li>
+          <li><strong>Play</strong>. The page with options of creating a room for playing with the specified settings and joining an already existing room by its 'Room ID'.</li>
         </ul>
       </>
     );

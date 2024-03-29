@@ -6,5 +6,6 @@ export class Player {
         this._color = color;
         this._isFirstTurn = true;
         this._isLoser = false;
+        this._name = "";
     }
 }

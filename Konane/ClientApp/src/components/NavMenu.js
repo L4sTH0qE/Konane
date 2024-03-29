@@ -2,17 +2,16 @@ import React, { Component } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
+import CustomDialog from "./CustomDialog";
+import {TextField} from "@mui/material";
 
 export class NavMenu extends Component {
   static displayName = NavMenu.name;
 
   constructor (props) {
     super(props);
-
     this.toggleNavbar = this.toggleNavbar.bind(this);
-    this.state = {
-      collapsed: true
-    };
+    this.state = {collapsed: true};
   }
 
   toggleNavbar () {
@@ -23,6 +22,7 @@ export class NavMenu extends Component {
 
   render() {
     return (
+        <>
       <header>
         <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
           <NavbarBrand tag={Link} to="/">Konane</NavbarBrand>
@@ -30,21 +30,19 @@ export class NavMenu extends Component {
           <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
             <ul className="navbar-nav flex-grow">
               <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
+                <NavLink tag={Link} className="text-dark" to='/'>Home</NavLink>
               </NavItem>
               <NavItem>
                 <NavLink tag={Link} className="text-dark" to="/rules">Rules</NavLink>
               </NavItem>
               <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/game">Play</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch</NavLink>
+                <NavLink tag={Link} className="text-dark" to="/game-options">Play</NavLink>
               </NavItem>
             </ul>
           </Collapse>
         </Navbar>
       </header>
+          </>
     );
   }
 }

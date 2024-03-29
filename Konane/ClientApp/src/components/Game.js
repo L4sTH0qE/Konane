@@ -54,14 +54,38 @@ export class Game extends Component {
             gameOver: true
         });
     }
+
+
+    addUser(name) {
+        fetch('/user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: name })
+        });
+        console.log("UserPost");
+    }
+
+    getUser(name) {
+        fetch('/user?name=' + this.state.name, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: name })
+        });
+        console.log("UserGet");
+    }
+    
+    
     modalEnd = ()=>{
         return(
             <div className="myModal" >
                 <div className="myModalContent">
                     <h3>Game over!<br/> Winner is: {this.state.winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
                     <div className="custom">
-                        <button className="btn btn-primary end-btn-left" onClick={this.restart}>Play again</button>
-                        <button className="btn btn-primary end-btn-right" onClick={this.goToHomePage}>Go to Home</button>
+                        <button className="btn btn-primary chs-btn-center" onClick={this.goToHomePage}>Go Home</button>
                         {this.state.redirect === true ? <Navigate to='/' replace={true}/> : null}
                     </div>
                 </div>

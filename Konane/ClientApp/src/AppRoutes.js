@@ -1,8 +1,7 @@
-import { FetchData } from "./components/FetchData";
 import { Home } from "./components/Home";
-import { Game } from "./components/Game";
-import { GameOptions } from "./components/GameOptions";
 import { Rules } from "./components/Rules";
+import InitGame from "./components/InitGame";
+import GameOptions from "./components/GameOptions";
 
 const AppRoutes = [
   {
@@ -10,20 +9,16 @@ const AppRoutes = [
     element: <Home />
   },
   {
-    path: '/fetch-data',
-    element: <FetchData />
-  },
-  {
-    path: '/start-game',
-    element: <Game />
-  },
-  {
-    path: '/game',
-    element: <GameOptions />
-  },
-  {
     path: '/rules',
     element: <Rules />
+  },
+  {
+    path: '/game-options',
+    element: <InitGame />
+  },
+  {
+    path: '/game-room',
+    element: <GameOptions />
   }
 ];
 

@@ -3,7 +3,6 @@
 namespace Konane.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -19,6 +18,7 @@ namespace Konane.Controllers
         }
 
         [HttpGet]
+        [Route("[controller]")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -28,6 +28,18 @@ namespace Konane.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+        
+        [HttpGet]
+        [Route("[controller]/{id}")]
+        public WeatherForecast Get(int id)
+        {
+            return new WeatherForecast
+                {
+                    Date = DateTime.Now.AddDays(2),
+                    TemperatureC = Random.Shared.Next(-20, 55),
+                    Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+                };
         }
 
     }

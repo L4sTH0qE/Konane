@@ -120,3 +120,25 @@ h3 {
     bottom: 15px;
     width: 160px;
 }
+
+.chs-btn-left{
+    display: inline-block;
+    margin-left: 30px;
+    bottom: 15px;
+    width: 160px;
+}
+
+.chs-btn-center{
+    display: inline-block;
+    margin-left: 30px;
+    margin-right: 30px;
+    bottom: 15px;
+    width: 160px;
+}
+
+.chs-btn-right{
+    display: inline-block;
+    margin-right: 30px;
+    bottom: 15px;
+    width: 160px;
+}

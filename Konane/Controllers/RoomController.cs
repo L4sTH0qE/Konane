@@ -4,24 +4,27 @@ using Microsoft.AspNetCore.SignalR;
 namespace Konane.Controllers
 {
     [ApiController]
-    [Route("[controller]/{roomId}")]
     public class RoomController : ControllerBase
     {
+        private readonly ILogger<UserController> _logger;
         private readonly IHubContext<NotificationHub> _hubContext;
         private static List<Room> _rooms = new List<Room>();
 
-        public RoomController(IHubContext<NotificationHub> hubContext)
+        public RoomController(IHubContext<NotificationHub> hubContext, ILogger<UserController> logger)
         {
+            _logger = logger;
             _hubContext = hubContext;
         }
 
         [HttpGet]
+        [Route("[controller]/{roomId}")]
         public Room? Get(string roomId)
         {
             return _rooms.Find(x => x.RoomId == roomId && x.Status != "Finished");
         }
 
         [HttpPost]
+        [Route("[controller]")]
         public IActionResult Post(string roomId, string player, [FromBody] Room room)
         {
             int index = _rooms.FindIndex(x => x.RoomId == roomId);
@@ -45,6 +48,7 @@ namespace Konane.Controllers
         }
         
         [HttpPost]
+        [Route("[controller]")]
         public IActionResult Post(string roomId, string player)
         {
             int index = _rooms.FindIndex(x => x.RoomId == roomId);
