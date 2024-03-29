@@ -28,6 +28,7 @@ export class Board
     getCell(x, y) {
         return this._cells[y][x];
     }
+    
     addFigures() {
         for (let i = 0; i < this._size; ++i)
         {

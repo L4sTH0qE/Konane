@@ -16,6 +16,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.17" />
+    <PackageReference Include="websocket-sharp-Net6.0" Version="1.0.3.1" />
   </ItemGroup>
 
   <ItemGroup>

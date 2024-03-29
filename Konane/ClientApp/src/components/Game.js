@@ -101,7 +101,7 @@ export class Game extends Component {
 
     render() {
         return (
-            <div>
+            <>
             {this.state.gameOver ? this.modalEnd() : null}
             <div className="game">
                 <BoardComponent
@@ -112,7 +112,7 @@ export class Game extends Component {
                     endGame={this.endGame}
                 />
             </div>
-            </div>
+            </>
         );
     }
 }
