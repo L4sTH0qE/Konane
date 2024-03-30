@@ -9,6 +9,7 @@ import {Game} from "../Game/Game";
 import {Board} from "../../models/Board";
 import logo_bot from "../../assets/gamemode_pve.png";
 import logo_player from "../../assets/gamemode_pvp.png";
+import flatted from "flatted";
 const { v4: uuidV4 } = require('uuid');
 
 export default function InitGame() {
@@ -23,6 +24,23 @@ export default function InitGame() {
     const [isFirst, setIsFirst] = useState(true);
     const [data, setData] = useState({roomId: roomId, size: size, bot: bot, isFirst: isFirst});
 
+    function getRoom(roomId) {
+        return fetch('/room/' + roomId)
+            .then((response)=>response.json())
+            .then((responseJson)=>{return responseJson})
+            .catch(() => {console.log('some error'); return "No room with such ID";});
+    }
+    
+    async function checkRoomInput(roomInput) {
+        const json = await getRoom(roomInput);  // command waits until completion
+        if (json === "No room with such ID") {
+            setRoomError("No room with such ID");
+        } else {
+            setData({roomId: roomInput, size: size, bot: bot, isFirst: isFirst});
+            setRoomDialogOpen(false); // close dialog
+            setStart(true);
+        }
+    }
 
     return (
         <Stack
@@ -38,15 +56,7 @@ export default function InitGame() {
                 handleContinue={() => {
                     // join a room
                     if (!roomInput) return; // if given room input is valid, do nothing.
-                    /*                    socket.emit("joinRoom", { roomId: roomInput }, (r) => {
-                                            // r is the response from the server
-                                            if (r.error) return setRoomError(r.message); // if an error is returned in the response set roomError to the error message and exit
-                                            console.log("response:", r);
-                                            setRoom(r?.roomId); // set room to the room ID
-                                            setPlayers(r?.players); // set players array to the array of players in the room
-                                            setOrientation("black"); // set orientation as black
-                                            setRoomDialogOpen(false); // close dialog
-                                        });*/
+                    checkRoomInput(roomInput);
                 }}
             >
                 <TextField
@@ -67,6 +77,7 @@ export default function InitGame() {
                     }
                 />
             </CustomDialog>
+            {start === true ? <Navigate to='/game-room' state={data} replace={true}/> : null}
             {createRoom === false ? null : <div className="myModal">
                 <div className="myModalOptions">
                     <h3>Game settings</h3>

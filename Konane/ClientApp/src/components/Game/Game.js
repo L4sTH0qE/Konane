@@ -8,6 +8,7 @@ import {Colors} from "../../models/Colors";
 import logo_white from "../../assets/checkers_top_white.png";
 import logo_black from "../../assets/checkers_top_black.png";
 import {Card, CardContent, Typography} from "@mui/material";
+const flatted = require('flatted');
 
 export default function  Game (props) {
     const [board, setBoard] = useState(null);
@@ -17,15 +18,20 @@ export default function  Game (props) {
     const [winner, setWinner] = useState(null);
     const [gameOver, setGameOver] = useState(false);
     const [redirect, setRedirect] = useState(false);
+    const [generate, setGenerate] = useState(false);
 
     useMemo(() => {
-        console.log("BoardReset");
-        if (!getRoom(props.roomId)) {
-            restart();
-        }
+        joinRoom(props.roomId);
     }, []);
 
-    function restart() {
+    useEffect(() => {
+        if (generate) {
+            createRoom();
+        }
+    }, [generate]);
+
+    async function createRoom() {
+        console.log("createRoom");
         const newBlackPlayer = new Player (Colors.BLACK);
         const newWhitePlayer = new Player (Colors.WHITE);
         newBlackPlayer._name = props.name;
@@ -35,12 +41,19 @@ export default function  Game (props) {
         setWhitePlayer(newWhitePlayer);
         setCurrentPlayer(newBlackPlayer)
 
-        const newBoard = new Board(props.size);
+        const newBoard = new Board(props.size, false);
         newBoard.addFigures();
         newBoard.highlightCellsToChoose(newBlackPlayer);
         setBoard(newBoard);
 
-        addRoom(props.roomId);
+        await fetch('/room', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ roomId: props.roomId, firstPlayer: newBlackPlayer._name, secondPlayer: newWhitePlayer._name, currentPlayer: newBlackPlayer._name, board: flatted.stringify(newBoard) })
+        });
+        console.log("RoomPost");
     }
 
     function swapPlayers() {
@@ -52,22 +65,33 @@ export default function  Game (props) {
         setGameOver(true);
     }
 
-    async function addRoom(roomId) {
+    async function postRoom(roomId) {
         await fetch('/room', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ roomId: roomId, firstPlayer: blackPlayer, secondPlayer: whitePlayer, currentPlayer: currentPlayer, board: board })
+            body: JSON.stringify({ roomId: roomId, firstPlayer: blackPlayer._name, secondPlayer: whitePlayer._name, currentPlayer: currentPlayer._name, board: flatted.stringify(board) })
         });
         console.log("RoomPost");
     }
 
     async function getRoom(roomId) {
+        await fetch('/room', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ roomId: roomId, firstPlayer: blackPlayer._name, secondPlayer: whitePlayer._name, currentPlayer: currentPlayer._name, board: flatted.stringify(board) })
+        });
+        console.log("RoomPost");
+    }
+
+    async function joinRoom(roomId) {
         try {
             const response = await fetch('/room/' + roomId);
             const room = await response.json();
-
+            console.log("getRoom");
             const newBlackPlayer = new Player (Colors.BLACK);
             newBlackPlayer._name = room.firstPlayer;
             newBlackPlayer._isBot = false;
@@ -82,76 +106,79 @@ export default function  Game (props) {
             }
             setBlackPlayer(newBlackPlayer);
             setWhitePlayer(newWhitePlayer);
-            setCurrentPlayer(room.currentPlayer);
+            if (room.currentPlayer._name === "") {
+                setCurrentPlayer(newWhitePlayer);
+            } else {
+                setCurrentPlayer(room.currentPlayer);
+            }
 
             const tmp = room.board;
-            const proxyBoard = tmp.json();
-            const newBoard = new Board(proxyBoard._size);
-            newBoard._cells = proxyBoard._cells;
+            const json = flatted.parse(tmp);
+            const newBoard = new Board (json, true);
+            console.log(newBoard);
             setBoard(newBoard);
-
             console.log("RoomGet");
             return true;
         } catch (error) {
+            setGenerate(true);
             console.error('Failed to fetch data:', error);
             return false;
         }
     }
-
-    useEffect(() => {
-        if (gameOver === false) return;
-        return(
-            <>
-                <div className="myModal" >
-                    <div className="myModalContent">
-                        <h3>Game over!<br/> Winner is: {winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
-                        <div className="custom">
-                            <button className="btn btn-primary chs-btn-center" onClick={() => setRedirect(true)}>Go Home</button>
-                        </div>
-                    </div>
-                </div>
-                {/*                <Card>
-                    <CardContent>
-                        <Typography variant="h5">Room ID: {this.props.roomId}</Typography>
-                    </CardContent>
-                </Card>
-                <div className="game">
-                    <BoardComponent
-                        board={this.state.board}
-                        setBoard={this.setBoard}
-                        currentPlayer={this.state.currentPlayer}
-                        swapPlayers={this.swapPlayers}
-                        endGame={this.endGame}
-                    />
-                </div>*/}
-            </>
-        );
-    }, [gameOver]);
-
-    useEffect(() => {
-        if (redirect === false) return;
-        return(
-            <Navigate to='/' replace={true}/>
-        );
-    }, [redirect]);
-
-
+    
     return (
         <>
-            <Card>
-                <CardContent>
-                    <Typography variant="h5">Room ID: {props.roomId}</Typography>
-                </CardContent>
-            </Card>
-            <div className="game">
-                <BoardComponent
-                    board={board}
-                    setBoard={setBoard}
-                    currentPlayer={currentPlayer}
-                    swapPlayers={swapPlayers}
-                    endGame={endGame}
-                />
-            </div>
+            {redirect === true ? <Navigate to='/' replace={true}/> :
+                gameOver === true ?             <>
+                        <div className="myModal" >
+                            <div className="myModalContent">
+                                <h3>Game over!<br/> Winner is: {winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
+                                <div className="custom">
+                                    <button className="btn btn-primary chs-btn-center" onClick={() => setRedirect(true)}>Go Home</button>
+                                </div>
+                            </div>
+                        </div>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h5">Room ID: {props.roomId}</Typography>
+                            </CardContent>
+                        </Card>
+                        <div className="game">
+                            <BoardComponent
+                                board={board}
+                                setBoard={setBoard}
+                                currentPlayer={currentPlayer}
+                                swapPlayers={swapPlayers}
+                                endGame={endGame}
+                                name={props.name}
+                            />
+                        </div>
+                    </> :
+                    <>
+                        {  board === null ? null :
+                            <>
+                                <Card>
+                                    <CardContent>
+                                        <Typography variant="h5">Room ID: {props.roomId}</Typography>
+                                    </CardContent>
+                                </Card>
+                                <div className="game">
+                                    <BoardComponent
+                                        board={board}
+                                        setBoard={setBoard}
+                                        currentPlayer={currentPlayer}
+                                        swapPlayers={swapPlayers}
+                                        endGame={endGame}
+                                        name={props.name}
+                                        roomId={props.roomId}
+                                        postRoom={postRoom}
+                                        getRoom={getRoom}
+                                    />
+                                </div>
+                            </>
+                        }
+                    </>
+            }
         </>
     );
 }

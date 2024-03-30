@@ -1,34 +1,36 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import CellComponent from "./CellComponent";
 import {Colors} from "../../models/Colors";
 import logo_white from "../../assets/checkers_top_white.png"
 import logo_black from "../../assets/checkers_top_black.png"
 
-const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame}) => {
+const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, roomId, postRoom, getRoom }) => {
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellsToChoose, setCellsToChoose] = useState(0);
 
     function click(cell) {
-        if (currentPlayer._isFirstTurn === true) {
-            if (cell?._figure !== null && cell._figure?._color === currentPlayer?._color && cell._available === true) {
-                cell.deleteFigure();
-                currentPlayer._isFirstTurn = false;
-                swapPlayers();
+        if(currentPlayer._name === name) {
+            if (currentPlayer._isFirstTurn === true) {
+                if (cell?._figure !== null && cell._figure?._color === currentPlayer?._color && cell._available === true) {
+                    cell.deleteFigure();
+                    currentPlayer._isFirstTurn = false;
+                    swapPlayers();
+                    setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose+ 1 : cellsToChoose - 1);
+                }
+            }
+            if (selectedCell && selectedCell === cell) {
+                setSelectedCell(null);
                 setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose+ 1 : cellsToChoose - 1);
             }
-        }
-        if (selectedCell && selectedCell === cell) {
-            setSelectedCell(null);
-            setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose+ 1 : cellsToChoose - 1);
-        }
-        if (selectedCell && selectedCell !== cell && selectedCell?._figure?.canMove(cell)) {
-            swapPlayers();
-            selectedCell.moveFigure(cell);
-            setSelectedCell(null);
-            setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose+ 1 : cellsToChoose - 1);
-        }
-        if (!selectedCell && cell?._figure !== null && cell._figure?._color === currentPlayer?._color) {
-            setSelectedCell(cell);
+            if (selectedCell && selectedCell !== cell && selectedCell?._figure?.canMove(cell)) {
+                swapPlayers();
+                selectedCell.moveFigure(cell);
+                setSelectedCell(null);
+                setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose+ 1 : cellsToChoose - 1);
+            }
+            if (!selectedCell && cell?._figure !== null && cell._figure?._color === currentPlayer?._color) {
+                setSelectedCell(cell);
+            }
         }
     }
 
@@ -65,6 +67,11 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame}) 
     useEffect(() => {
         highlightCellsToChoose();
     }, [cellsToChoose]);
+
+    useMemo(() => {
+        while (board === null) {
+        }
+    }, []);
 
     return (
         <div>

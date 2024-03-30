@@ -15,6 +15,13 @@ namespace Konane.Controllers
             _logger = logger;
             _hubContext = hubContext;
         }
+        
+        [HttpGet]
+        [Route("[controller]")]
+        public IEnumerable<Room> Get()
+        {
+            return _rooms.Values;
+        }
 
         [HttpGet]
         [Route("[controller]/{roomId}")]
@@ -27,6 +34,11 @@ namespace Konane.Controllers
         [Route("[controller]")]
         public IActionResult Post([FromBody] Room room)
         {
+            if (room.RoomId == null)
+            {
+                _hubContext.Clients.All.SendAsync("NotAddRoom", room.RoomId);
+                return Ok(room.RoomId);
+            }
             _rooms.TryGetValue(room.RoomId, out Room? testRoom);
             if (testRoom == null || _rooms[room.RoomId].Status == "Finished")
             {

@@ -5,24 +5,28 @@ import {Figure} from "./Figure";
 
 export class Board
 {
-    constructor(size)
+    constructor(size, flag)
     {
-        this._size = size !== null ? size : 8;
-        const cells = []
-        for (let i = 0; i < size; ++i)
-        {
-            const row = [];
-            for (let j = 0; j < size; ++j)
+        if (flag) {
+            Object.assign(this, size);
+        } else {
+            this._size = size !== null ? size : 8;
+            const cells = []
+            for (let i = 0; i < size; ++i)
             {
-                if (((i + j) % 2) === 0) {
-                    row.push(new Cell(this, j, i, Colors.WHITE, null));
-                } else {
-                    row.push(new Cell(this, j, i, Colors.BLACK, null));
+                const row = [];
+                for (let j = 0; j < size; ++j)
+                {
+                    if (((i + j) % 2) === 0) {
+                        row.push(new Cell(this, j, i, Colors.WHITE, null));
+                    } else {
+                        row.push(new Cell(this, j, i, Colors.BLACK, null));
+                    }
                 }
+                cells.push(row);
             }
-            cells.push(row);
+            this._cells = cells;
         }
-        this._cells = cells;
     }
 
     getCell(x, y) {
@@ -119,7 +123,6 @@ export class Board
                 }
             }
             if (counter === 0) {
-                currentPlayer._isLoser = true;
                 return true;
             }
         }
