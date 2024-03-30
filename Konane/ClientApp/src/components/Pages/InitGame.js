@@ -20,9 +20,8 @@ export default function InitGame() {
     const [roomId, setRoomId] = useState("");
     const [size, setSize] = useState(8);
     const [bot, setBot] = useState(false);
-    const [name, setName] = useState("");
     const [isFirst, setIsFirst] = useState(true);
-    const [data, setData] = useState({roomId: roomId, size: size, bot: bot, name: name, isFirst: isFirst});
+    const [data, setData] = useState({roomId: roomId, size: size, bot: bot, isFirst: isFirst});
 
 
     return (
@@ -39,15 +38,15 @@ export default function InitGame() {
                 handleContinue={() => {
                     // join a room
                     if (!roomInput) return; // if given room input is valid, do nothing.
-/*                    socket.emit("joinRoom", { roomId: roomInput }, (r) => {
-                        // r is the response from the server
-                        if (r.error) return setRoomError(r.message); // if an error is returned in the response set roomError to the error message and exit
-                        console.log("response:", r);
-                        setRoom(r?.roomId); // set room to the room ID
-                        setPlayers(r?.players); // set players array to the array of players in the room
-                        setOrientation("black"); // set orientation as black
-                        setRoomDialogOpen(false); // close dialog
-                    });*/
+                    /*                    socket.emit("joinRoom", { roomId: roomInput }, (r) => {
+                                            // r is the response from the server
+                                            if (r.error) return setRoomError(r.message); // if an error is returned in the response set roomError to the error message and exit
+                                            console.log("response:", r);
+                                            setRoom(r?.roomId); // set room to the room ID
+                                            setPlayers(r?.players); // set players array to the array of players in the room
+                                            setOrientation("black"); // set orientation as black
+                                            setRoomDialogOpen(false); // close dialog
+                                        });*/
                 }}
             >
                 <TextField
@@ -87,7 +86,7 @@ export default function InitGame() {
                         }}>Player vs Bot</button>
                         <button className="btn btn-primary chs-btn-center" onClick={() => {
                             setStart(true);
-                            setData({roomId: roomId,size: size, bot: bot});
+                            setData({roomId: roomId, size: size, bot: bot, isFirst: isFirst});
                         }}>START A GAME</button>
                         <button className="btn btn-primary chs-btn-right" onClick={() => {
                             setBot(false);
@@ -96,7 +95,7 @@ export default function InitGame() {
                     </div>
                 </div>
             </div> }
-            
+
             <Button variant="contained" onClick={() => {
                 setRoomId(uuidV4());
                 setIsFirst(true);

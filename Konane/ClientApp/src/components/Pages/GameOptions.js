@@ -1,17 +1,17 @@
 import React, {Component} from 'react';
-import "./Pages.css"
-import {Game} from "../Game/Game";
+import {useLocation} from "react-router-dom";
 import { Container, TextField } from "@mui/material"
 import CustomDialog from "../CustomDialog";
-import {useLocation} from "react-router-dom";
+import "./Pages.css"
+import Game from "../Game/Game";
 
-const GameOptions = () => {
+const GameOptions = (props) => {
     const location = useLocation();
     console.log(location.state);
-    
+
     return (
         <>
-            <Game size={location.state.size} roomId={location.state.roomId} bot={location.state.bot} name={location.state.name} isFirst={location.state.isFirst}/>
+            <Game size={location.state.size} roomId={location.state.roomId} isBot={location.state.bot} name={props.username} isFirst={location.state.isFirst}/>
         </>
     );
 };

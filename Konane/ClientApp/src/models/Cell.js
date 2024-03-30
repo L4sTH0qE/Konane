@@ -12,7 +12,7 @@ export class Cell
         this._available = false;
         this._id = Math.random();
     }
-    
+
     isEmpty() {
         return this._figure === null;
     }
@@ -23,7 +23,7 @@ export class Cell
         }
         return false;
     }
-    
+
     isEmptyVertical(target) {
         if (this._x !== target._x) {
             return false;
@@ -74,12 +74,12 @@ export class Cell
         }
         return true;
     }
-    
+
     setFigure(figure) {
         this._figure = figure;
         this._figure._cell = this;
     }
-    
+
     moveFigure(target) {
         if(this._figure && this._figure?.canMove(target)) {
             this._figure.moveFigure(target);
@@ -101,7 +101,7 @@ export class Cell
             }
         }
     }
-    
+
     deleteFigure() {
         this._figure._cell = null;
         this._figure = null;

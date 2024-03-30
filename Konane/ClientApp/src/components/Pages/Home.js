@@ -1,18 +1,35 @@
 import React, {Component, useEffect, useState} from 'react';
+import useInterval from "../useInterval";
 
 export default function Home (props) {
     const [username, setUsername] = useState("");
     const [wins, setWins] = useState(0);
-    const [user, setUser] = useState("");
 
     useEffect(() => {
         setUsername(props.username);
         setWins(props.wins);
-    }, []);
-    
+    }, [props.username]);
+
+    async function updateWins() {
+
+        try {
+            const response = await fetch('/user/' + username);
+            const user = await response.json();
+            if (username !== props.username || wins !== user.wins) {
+                setUsername(user.username);
+                setWins(user.wins);
+                console.log("WinsUpdate");
+            }
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
+        }
+    }
+
+    useInterval(() => updateWins(), 5000)
+
     return (
         <>
-            <h1>Hello, {props.username === "" ? "stranger" : props.username}! Your victories: {wins}</h1>
+            <h1>Hello, {username === "" ? "stranger" : username}! Your victories: {wins}</h1>
             <p>This site is designed to provide its visitors with the best Konane experience they could ever have in their life!</p>
             <p>To help you get started, here are descriptions of navigation links:</p>
             <ul>

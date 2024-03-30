@@ -24,11 +24,11 @@ export class Board
         }
         this._cells = cells;
     }
-    
+
     getCell(x, y) {
         return this._cells[y][x];
     }
-    
+
     addFigures() {
         for (let i = 0; i < this._size; ++i)
         {
@@ -125,7 +125,7 @@ export class Board
         }
         return false;
     }
-    
+
     getCopyBoard() {
         const newBoard = new Board(8);
         newBoard._cells = this._cells;

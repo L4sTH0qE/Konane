@@ -16,7 +16,7 @@ export class Figure
         this._cell._figure = this;
         this._id = Math.random();
     }
-    
+
     canMove(target) {
         if (target._figure !== null) {
             return false;
@@ -29,7 +29,7 @@ export class Figure
         }
         return false;
     }
-    
+
     moveFigure(target) {
         this._isFirstStep = false;
     }

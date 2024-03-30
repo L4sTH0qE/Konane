@@ -57,12 +57,16 @@ export default class App extends Component {
     }
 
     async getUser(name) {
-        const response = await fetch('/user/' + name);
-        const user = await response.json();
-        if (this.state.username !== user.name || this.state.wins !== user.wins) {
-            this.setState({user: user, wins: user.wins});
+        try {
+            const response = await fetch('/user/' + name);
+            const user = await response.json();
+            if (this.state.username !== user.name || this.state.wins !== user.wins) {
+                this.setState({user: user, wins: user.wins});
+            }
+            console.log("UserGet");
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
         }
-        console.log("UserGet");
     }
 
     render() {

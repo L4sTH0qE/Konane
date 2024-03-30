@@ -2,7 +2,7 @@ import React from 'react';
 
 const CellComponent = ({cell, selected, click}) => {
     return (
-        <div 
+        <div
             className={['cell', cell._color, selected ? 'selected' : '', cell._available && cell._figure ? 'available-figure' : ''].join(' ')}
             onClick={() => click(cell)}
         >

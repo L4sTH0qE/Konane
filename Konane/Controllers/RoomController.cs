@@ -18,62 +18,30 @@ namespace Konane.Controllers
 
         [HttpGet]
         [Route("[controller]/{roomId}")]
-        public Room? Get(string roomId, string player)
+        public Room? Get(string roomId)
         {
             return !_rooms.TryGetValue(roomId, out Room? room) ? null : _rooms[roomId];
         }
 
         [HttpPost]
         [Route("[controller]")]
-        public IActionResult Post(string roomId, string player, [FromBody] Room room)
+        public IActionResult Post([FromBody] Room room)
         {
-            _rooms.TryGetValue(roomId, out Room? testRoom);
-            if (testRoom == null)
+            _rooms.TryGetValue(room.RoomId, out Room? testRoom);
+            if (testRoom == null || _rooms[room.RoomId].Status == "Finished")
             {
                 room.Status = "Waiting";
-                room.FirstPlayer = player;
-                room.SecondPlayer = null;
-                _rooms[roomId] = room;
-                _hubContext.Clients.All.SendAsync("AddRoom", roomId);
-                return Ok(roomId);
-            } else if (_rooms[roomId].Status == "Finished") {
-                room.Status = "Waiting";
-                room.FirstPlayer = player;
-                room.SecondPlayer = null;
-                _rooms[roomId] = room;
-                _hubContext.Clients.All.SendAsync("AddRoom", roomId);
-                return Ok(roomId);
+                _rooms[room.RoomId] = room;
+                _hubContext.Clients.All.SendAsync("AddRoom", room.RoomId);
+                return Ok(room.RoomId);
+            } else if (_rooms[room.RoomId].Status == "Waiting") {
+                room.Status = "Active";
+                _rooms[room.RoomId] = room;
+                _hubContext.Clients.All.SendAsync("AddRoom", room.RoomId);
+                return Ok(room.RoomId);
             }
-            _hubContext.Clients.All.SendAsync("NotAddRoom", roomId);
-            return Ok(roomId);
-        }
-        
-        [HttpPost]
-        [Route("[controller]")]
-        public IActionResult Post(string roomId, string player)
-        {
-            _rooms.TryGetValue(roomId, out Room? testRoom);
-            if (testRoom != null)
-            {
-                if (_rooms[roomId].Status == "Waiting" && _rooms[roomId].FirstPlayer != player)
-                {
-                    _rooms[roomId].SecondPlayer = player;
-                    _rooms[roomId].Status = "Active";
-                    _hubContext.Clients.All.SendAsync("JoinRoom", roomId);
-                    return Ok(roomId);
-                } else if (_rooms[roomId].FirstPlayer == player || _rooms[roomId].SecondPlayer == player)
-                {
-                    _hubContext.Clients.All.SendAsync("JoinRoom", roomId);
-                    return Ok(roomId);
-                }
-                else
-                {
-                    _hubContext.Clients.All.SendAsync("NotJoinRoom", roomId);
-                    return Ok(roomId);
-                }
-            }
-            _hubContext.Clients.All.SendAsync("NotJoinRoom", roomId);
-            return Ok(roomId);
+            _hubContext.Clients.All.SendAsync("NotAddRoom", room.RoomId);
+            return Ok(room.RoomId);
         }
     }
 }

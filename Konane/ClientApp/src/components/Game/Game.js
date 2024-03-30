@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useMemo, useState} from 'react';
 import BoardComponent from "./BoardComponent";
 import {Board} from "../../models/Board";
 import {Player} from "../../models/Player";
@@ -7,136 +7,151 @@ import "./Game.css"
 import {Colors} from "../../models/Colors";
 import logo_white from "../../assets/checkers_top_white.png";
 import logo_black from "../../assets/checkers_top_black.png";
+import {Card, CardContent, Typography} from "@mui/material";
 
-export class Game extends Component {
-    
-    static displayName = Game.name;
-    constructor(props) {
-        super(props);
-        this.state = {board: Board, whitePlayer: Player, blackPlayer: Player, currentPlayer: Player, winner: Player, gameOver: Boolean, redirect: Boolean};
-        this.restart = this.restart.bind(this);
-        this.setBoard = this.setBoard.bind(this);
-        this.setWhitePlayer = this.setWhitePlayer.bind(this);
-        this.setBlackPlayer = this.setBlackPlayer.bind(this);
-        this.setCurrentPlayer = this.setCurrentPlayer.bind(this);
-        this.swapPlayers = this.swapPlayers.bind(this);
-        this.endGame = this.endGame.bind(this);
-        this.goToHomePage = this.goToHomePage.bind(this);
-    }
+export default function  Game (props) {
+    const [board, setBoard] = useState(null);
+    const [whitePlayer, setWhitePlayer] = useState(null);
+    const [blackPlayer, setBlackPlayer] = useState(null);
+    const [currentPlayer, setCurrentPlayer] = useState(null);
+    const [winner, setWinner] = useState(null);
+    const [gameOver, setGameOver] = useState(false);
+    const [redirect, setRedirect] = useState(false);
 
-    componentDidMount() {
-        this.restart();
-    }
-    
-    restart() {
-        this.setState({
-            gameOver: false,
-            redirect: false
-        });
-        const newBoard = new Board(this.props.size);
-        const newWhitePlayer = new Player (Colors.WHITE);
+    useMemo(() => {
+        console.log("BoardReset");
+        if (!getRoom(props.roomId)) {
+            restart();
+        }
+    }, []);
+
+    function restart() {
         const newBlackPlayer = new Player (Colors.BLACK);
-        this.setWhitePlayer(newWhitePlayer);
-        this.setBlackPlayer(newBlackPlayer);
-        this.setCurrentPlayer(newBlackPlayer)
+        const newWhitePlayer = new Player (Colors.WHITE);
+        newBlackPlayer._name = props.name;
+        newBlackPlayer._isBot = false;
+        newWhitePlayer._isBot = props.isBot;
+        setBlackPlayer(newBlackPlayer);
+        setWhitePlayer(newWhitePlayer);
+        setCurrentPlayer(newBlackPlayer)
+
+        const newBoard = new Board(props.size);
         newBoard.addFigures();
         newBoard.highlightCellsToChoose(newBlackPlayer);
-        this.setBoard(newBoard);
+        setBoard(newBoard);
+
+        addRoom(props.roomId);
     }
 
-    swapPlayers() {
-        this.setCurrentPlayer(this.state.currentPlayer._color === Colors.WHITE ? this.state.blackPlayer : this.state.whitePlayer);
+    function swapPlayers() {
+        setCurrentPlayer(currentPlayer._color === Colors.WHITE ? blackPlayer : whitePlayer);
     }
 
-    endGame(currentPlayer) {
-        this.setState({
-            winner: currentPlayer === this.state.blackPlayer ? this.state.whitePlayer : this.state.blackPlayer,
-            gameOver: true
-        });
+    function endGame(currentPlayer) {
+        setWinner(currentPlayer === blackPlayer ? whitePlayer : blackPlayer);
+        setGameOver(true);
     }
 
-
-    addUser(name) {
-        fetch('/user', {
+    async function addRoom(roomId) {
+        await fetch('/room', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username: name })
+            body: JSON.stringify({ roomId: roomId, firstPlayer: blackPlayer, secondPlayer: whitePlayer, currentPlayer: currentPlayer, board: board })
         });
-        console.log("UserPost");
+        console.log("RoomPost");
     }
 
-    getUser(name) {
-        fetch('/user?name=' + this.state.name, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username: name })
-        });
-        console.log("UserGet");
+    async function getRoom(roomId) {
+        try {
+            const response = await fetch('/room/' + roomId);
+            const room = await response.json();
+
+            const newBlackPlayer = new Player (Colors.BLACK);
+            newBlackPlayer._name = room.firstPlayer;
+            newBlackPlayer._isBot = false;
+            const newWhitePlayer = new Player (Colors.WHITE);
+            newWhitePlayer._isBot = false;
+            if (room.secondPlayer === props.name || room.secondPlayer === "") {
+                newWhitePlayer._name = props.name;
+                setBlackPlayer(newBlackPlayer);
+                setWhitePlayer(newWhitePlayer);
+            } else {
+                newWhitePlayer._name = room.secondPlayer;
+            }
+            setBlackPlayer(newBlackPlayer);
+            setWhitePlayer(newWhitePlayer);
+            setCurrentPlayer(room.currentPlayer);
+
+            const tmp = room.board;
+            const proxyBoard = tmp.json();
+            const newBoard = new Board(proxyBoard._size);
+            newBoard._cells = proxyBoard._cells;
+            setBoard(newBoard);
+
+            console.log("RoomGet");
+            return true;
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
+            return false;
+        }
     }
-    
-    
-    modalEnd = ()=>{
+
+    useEffect(() => {
+        if (gameOver === false) return;
         return(
-            <div className="myModal" >
-                <div className="myModalContent">
-                    <h3>Game over!<br/> Winner is: {this.state.winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
-                    <div className="custom">
-                        <button className="btn btn-primary chs-btn-center" onClick={this.goToHomePage}>Go Home</button>
-                        {this.state.redirect === true ? <Navigate to='/' replace={true}/> : null}
+            <>
+                <div className="myModal" >
+                    <div className="myModalContent">
+                        <h3>Game over!<br/> Winner is: {winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
+                        <div className="custom">
+                            <button className="btn btn-primary chs-btn-center" onClick={() => setRedirect(true)}>Go Home</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        );
-    }
-    
-    goToHomePage = ()=>{
-        this.setState({
-            redirect: true
-        });
-    }
-    
-    setBoard(newBoard) {
-        this.setState({ 
-            board: newBoard 
-        });
-    }
-
-    setWhitePlayer(player) {
-        this.setState({
-            whitePlayer: player
-        });
-    }
-
-    setBlackPlayer(player) {
-        this.setState({
-            blackPlayer: player
-        });
-    }
-
-    setCurrentPlayer(player) {
-        this.setState({
-            currentPlayer: player
-        });
-    }
-
-    render() {
-        return (
-            <>
-            {this.state.gameOver ? this.modalEnd() : null}
-            <div className="game">
-                <BoardComponent
-                    board={this.state.board}
-                    setBoard={this.setBoard}
-                    currentPlayer={this.state.currentPlayer}
-                    swapPlayers={this.swapPlayers}
-                    endGame={this.endGame}
-                />
-            </div>
+                {/*                <Card>
+                    <CardContent>
+                        <Typography variant="h5">Room ID: {this.props.roomId}</Typography>
+                    </CardContent>
+                </Card>
+                <div className="game">
+                    <BoardComponent
+                        board={this.state.board}
+                        setBoard={this.setBoard}
+                        currentPlayer={this.state.currentPlayer}
+                        swapPlayers={this.swapPlayers}
+                        endGame={this.endGame}
+                    />
+                </div>*/}
             </>
         );
-    }
+    }, [gameOver]);
+
+    useEffect(() => {
+        if (redirect === false) return;
+        return(
+            <Navigate to='/' replace={true}/>
+        );
+    }, [redirect]);
+
+
+    return (
+        <>
+            <Card>
+                <CardContent>
+                    <Typography variant="h5">Room ID: {props.roomId}</Typography>
+                </CardContent>
+            </Card>
+            <div className="game">
+                <BoardComponent
+                    board={board}
+                    setBoard={setBoard}
+                    currentPlayer={currentPlayer}
+                    swapPlayers={swapPlayers}
+                    endGame={endGame}
+                />
+            </div>
+        </>
+    );
 }

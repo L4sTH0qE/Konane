@@ -11,6 +11,8 @@ namespace Konane
         
         public string? SecondPlayer { get; set; }
         
+        public string? CurrentPlayer { get; set; }
+        
         public string? Board { get; set; }
     }
 }

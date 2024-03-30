@@ -7,7 +7,7 @@ import logo_black from "../../assets/checkers_top_black.png"
 const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame}) => {
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellsToChoose, setCellsToChoose] = useState(0);
-    
+
     function click(cell) {
         if (currentPlayer._isFirstTurn === true) {
             if (cell?._figure !== null && cell._figure?._color === currentPlayer?._color && cell._available === true) {
@@ -31,10 +31,10 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame}) 
             setSelectedCell(cell);
         }
     }
-    
+
     function highlightCellsToChoose() {
         if (typeof board.highlightCellsToChoose === 'function') {
-            
+
             let flag = board.highlightCellsToChoose(currentPlayer);
             updateBoard();
             if (flag) {
@@ -50,7 +50,7 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame}) 
             updateBoard();
         }
     }
-    
+
     function updateBoard() {
         if (typeof board.getCopyBoard === 'function' && typeof setBoard === 'function') {
             const newBoard = board.getCopyBoard();
@@ -65,7 +65,7 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame}) 
     useEffect(() => {
         highlightCellsToChoose();
     }, [cellsToChoose]);
-    
+
     return (
         <div>
             <h3 className="player-turn">Current player: {'\u00A0'} {currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
