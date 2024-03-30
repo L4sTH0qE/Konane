@@ -1,9 +1,3 @@
-using System.Net;
-using System.Net.Sockets;
-using System.Net.WebSockets;
-using WebSocketSharp;
-using WebSocketSharp.Server;
-
 namespace Konane
 {
     public class Program

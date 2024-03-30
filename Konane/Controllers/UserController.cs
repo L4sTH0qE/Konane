@@ -26,15 +26,16 @@ namespace Konane.Controllers
         [HttpGet]
         [Route("[controller]/{name}")]
         public User? Get(string name)
-        {
-            return _users.Find(x => x.Username == name);
+        {        
+            Console.WriteLine("UserGet");
+            return _users.Find(x => x.Name == name);
         }
 
         [HttpPost]
         [Route("[controller]")]
         public IActionResult Post([FromBody] User user)
         {
-            int index = _users.FindIndex(x => x.Username == user.Username);
+            int index = _users.FindIndex(x => x.Name == user.Name);
             if (index == -1)
             {
                 user.Id = _users.Count + 1;
@@ -42,7 +43,7 @@ namespace Konane.Controllers
                 _users.Add(user);
             }
             _hubContext.Clients.All.SendAsync("AddUser", user);
-
+            Console.WriteLine("UserPost");
             return Ok(user);
         }
     }

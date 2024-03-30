@@ -8,7 +8,7 @@ namespace Konane.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly IHubContext<NotificationHub> _hubContext;
-        private static List<Room> _rooms = new List<Room>();
+        private static Dictionary<string, Room> _rooms = new Dictionary<string, Room>();
 
         public RoomController(IHubContext<NotificationHub> hubContext, ILogger<UserController> logger)
         {
@@ -18,28 +18,29 @@ namespace Konane.Controllers
 
         [HttpGet]
         [Route("[controller]/{roomId}")]
-        public Room? Get(string roomId)
+        public Room? Get(string roomId, string player)
         {
-            return _rooms.Find(x => x.RoomId == roomId && x.Status != "Finished");
+            return !_rooms.TryGetValue(roomId, out Room? room) ? null : _rooms[roomId];
         }
 
         [HttpPost]
         [Route("[controller]")]
         public IActionResult Post(string roomId, string player, [FromBody] Room room)
         {
-            int index = _rooms.FindIndex(x => x.RoomId == roomId);
-            if (index == -1) {
-                room.Id = _rooms.Count + 1;
+            _rooms.TryGetValue(roomId, out Room? testRoom);
+            if (testRoom == null)
+            {
                 room.Status = "Waiting";
                 room.FirstPlayer = player;
-                _rooms.Add(room);
+                room.SecondPlayer = null;
+                _rooms[roomId] = room;
                 _hubContext.Clients.All.SendAsync("AddRoom", roomId);
                 return Ok(roomId);
-            }
-            else if (_rooms[index].Status == "Finished") {
-                _rooms[index].Status = "Waiting";
-                _rooms[index].FirstPlayer = player;
-                _rooms[index].SecondPlayer = null;
+            } else if (_rooms[roomId].Status == "Finished") {
+                room.Status = "Waiting";
+                room.FirstPlayer = player;
+                room.SecondPlayer = null;
+                _rooms[roomId] = room;
                 _hubContext.Clients.All.SendAsync("AddRoom", roomId);
                 return Ok(roomId);
             }
@@ -51,15 +52,23 @@ namespace Konane.Controllers
         [Route("[controller]")]
         public IActionResult Post(string roomId, string player)
         {
-            int index = _rooms.FindIndex(x => x.RoomId == roomId);
-            if (index != -1)
+            _rooms.TryGetValue(roomId, out Room? testRoom);
+            if (testRoom != null)
             {
-                Room room = _rooms[index];
-                if (room.Status == "Waiting")
+                if (_rooms[roomId].Status == "Waiting" && _rooms[roomId].FirstPlayer != player)
                 {
-                    room.SecondPlayer = player;
-                    room.Status = "Active";
+                    _rooms[roomId].SecondPlayer = player;
+                    _rooms[roomId].Status = "Active";
                     _hubContext.Clients.All.SendAsync("JoinRoom", roomId);
+                    return Ok(roomId);
+                } else if (_rooms[roomId].FirstPlayer == player || _rooms[roomId].SecondPlayer == player)
+                {
+                    _hubContext.Clients.All.SendAsync("JoinRoom", roomId);
+                    return Ok(roomId);
+                }
+                else
+                {
+                    _hubContext.Clients.All.SendAsync("NotJoinRoom", roomId);
                     return Ok(roomId);
                 }
             }

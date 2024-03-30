@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
-import CustomDialog from "./CustomDialog";
-import {TextField} from "@mui/material";
 
 export class NavMenu extends Component {
   static displayName = NavMenu.name;
