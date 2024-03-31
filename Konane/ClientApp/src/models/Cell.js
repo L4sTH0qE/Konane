@@ -10,7 +10,6 @@ export class Cell
         this._y = y;
         this._figure = figure;
         this._available = false;
-        this._id = Math.random();
     }
 
     isEmpty() {

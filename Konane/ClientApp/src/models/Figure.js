@@ -5,16 +5,13 @@ export class Figure
 {
     constructor(color, cell)
     {
-        this._logo = null;
+        this._logo = false;
         this._color = color;
-        if (this._color === Colors.WHITE) {
-            this._logo = logo_white;
-        } else {
-            this._logo = logo_black;
+        if (this._color === Colors.WHITE || this._color === Colors.BLACK) {
+            this._logo = true;
         }
         this._cell = cell;
         this._cell._figure = this;
-        this._id = Math.random();
     }
 
     canMove(target) {

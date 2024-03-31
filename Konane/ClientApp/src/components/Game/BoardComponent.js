@@ -3,13 +3,15 @@ import CellComponent from "./CellComponent";
 import {Colors} from "../../models/Colors";
 import logo_white from "../../assets/checkers_top_white.png"
 import logo_black from "../../assets/checkers_top_black.png"
+import {Card, CardContent, Typography} from "@mui/material";
 
-const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, roomId, postRoom, getRoom }) => {
+const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, roomId, postRoom, getRoom, firstPlayer, secondPlayer}) => {
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellsToChoose, setCellsToChoose] = useState(0);
 
     function click(cell) {
-        if(currentPlayer._name === name) {
+        console.log("click!");
+        if(currentPlayer._name === name && firstPlayer !== "" && secondPlayer !== "") {
             if (currentPlayer._isFirstTurn === true) {
                 if (cell?._figure !== null && cell._figure?._color === currentPlayer?._color && cell._available === true) {
                     cell.deleteFigure();
@@ -75,7 +77,6 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
 
     return (
         <div>
-            <h3 className="player-turn">Current player: {'\u00A0'} {currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
             <div className={board._size === 6 ? "board6" : board._size === 8 ? "board8" : "board10"}>
                 {board._cells?.map((row, index) =>
                     <React.Fragment key={index}>
@@ -83,7 +84,7 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
                             <CellComponent
                                 click={click}
                                 cell={cell}
-                                key={cell._id}
+                                key={board._size * cell._y + cell._x}
                                 selected={cell._x === selectedCell?._x && cell._y === selectedCell?._y}
                             />
                         )}

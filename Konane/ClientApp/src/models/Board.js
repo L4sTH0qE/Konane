@@ -5,11 +5,8 @@ import {Figure} from "./Figure";
 
 export class Board
 {
-    constructor(size, flag)
+    constructor(size)
     {
-        if (flag) {
-            Object.assign(this, size);
-        } else {
             this._size = size !== null ? size : 8;
             const cells = []
             for (let i = 0; i < size; ++i)
@@ -26,7 +23,6 @@ export class Board
                 cells.push(row);
             }
             this._cells = cells;
-        }
     }
 
     getCell(x, y) {
