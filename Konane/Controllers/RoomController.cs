@@ -51,7 +51,16 @@ namespace Konane.Controllers
                 _rooms[room.RoomId] = room;
                 _hubContext.Clients.All.SendAsync("AddRoom", room.RoomId);
                 return Ok(room.RoomId);
-            }
+            } else if (_rooms[room.RoomId].Status == "Active") {
+                room.Status = "Active";
+                if (room.FirstTurnFinished && room.SecondTurnFinished)
+                {
+                    room.Status = "Finished";
+                }
+                _rooms[room.RoomId] = room;
+                _hubContext.Clients.All.SendAsync("UpdateRoom", room.RoomId);
+                return Ok(room.RoomId);
+            } 
             _hubContext.Clients.All.SendAsync("NotAddRoom", room.RoomId);
             return Ok(room.RoomId);
         }

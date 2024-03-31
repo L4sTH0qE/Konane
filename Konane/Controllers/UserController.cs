@@ -41,6 +41,12 @@ namespace Konane.Controllers
                 user.Id = _users.Count + 1;
                 user.Wins = 0;
                 _users.Add(user);
+            } else
+            {
+                if (user.Wins != 0)
+                {
+                    _users[index].Wins = user.Wins;
+                }
             }
             _hubContext.Clients.All.SendAsync("AddUser", user);
             Console.WriteLine("UserPost");

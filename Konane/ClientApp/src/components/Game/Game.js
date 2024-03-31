@@ -9,6 +9,7 @@ import {Card, CardContent, Typography} from "@mui/material";
 import "./Game.css";
 import logo_white from "../../assets/checkers_top_white.png";
 import logo_black from "../../assets/checkers_top_black.png";
+import useInterval from "../useInterval";
 
 const flatted = require('flatted');
 
@@ -17,11 +18,14 @@ export default function  Game (props) {
     const [whitePlayer, setWhitePlayer] = useState(null);
     const [blackPlayer, setBlackPlayer] = useState(null);
     const [currentPlayer, setCurrentPlayer] = useState(null);
-    const [opponent, setOpponent] = useState("");
     const [winner, setWinner] = useState(null);
     const [gameOver, setGameOver] = useState(false);
     const [redirect, setRedirect] = useState(false);
     const [generate, setGenerate] = useState(false);
+    const [active, setActive] = useState(false);
+    const [update, setUpdate] = useState(false);
+    const [highlight, setHighlight] = useState(false);
+    const [winnerFlag, setWinnerFlag] = useState(false);
 
     useMemo(() => {
         joinRoom(props.roomId);
@@ -44,7 +48,6 @@ export default function  Game (props) {
         setCurrentPlayer(newBlackPlayer);
         const newBoard = new Board(props.size);
         newBoard.addFigures();
-        newBoard.highlightCellsToChoose(newBlackPlayer);
         setBoard(newBoard);
         console.log(newBoard);
         await fetch('/room', {
@@ -55,37 +58,6 @@ export default function  Game (props) {
             body: JSON.stringify({ roomId: props.roomId, firstPlayer: newBlackPlayer._name, secondPlayer: newWhitePlayer._name, currentPlayer: newBlackPlayer._name, board: flatted.stringify(newBoard) })
         });
         console.log("CreateRoom");
-    }
-
-    function swapPlayers() {
-        setCurrentPlayer(currentPlayer._color === Colors.WHITE ? blackPlayer : whitePlayer);
-    }
-
-    function endGame(currentPlayer) {
-        setWinner(currentPlayer === blackPlayer ? whitePlayer : blackPlayer);
-        setGameOver(true);
-    }
-
-    async function postRoom(roomId) {
-        await fetch('/room', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ roomId: roomId, firstPlayer: blackPlayer._name, secondPlayer: whitePlayer._name, currentPlayer: currentPlayer._name, board: flatted.stringify(board) })
-        });
-        console.log("RoomPost");
-    }
-
-    async function getRoom(roomId) {
-        await fetch('/room', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ roomId: roomId, firstPlayer: blackPlayer._name, secondPlayer: whitePlayer._name, currentPlayer: currentPlayer._name, board: flatted.stringify(board) })
-        });
-        console.log("RoomPost");
     }
 
     async function joinRoom(roomId) {
@@ -99,7 +71,6 @@ export default function  Game (props) {
             newWhitePlayer._isBot = false;
             if (room.secondPlayer === props.name || room.secondPlayer === "") {
                 newWhitePlayer._name = props.name;
-                setOpponent(room.firstPlayer);
             } else {
                 newWhitePlayer._name = room.secondPlayer;
             }
@@ -111,7 +82,7 @@ export default function  Game (props) {
             } else {
                 room.currentPlayer === newBlackPlayer._name ? setCurrentPlayer(newBlackPlayer) : setCurrentPlayer(newWhitePlayer);
             }
-            
+
             const tmp = flatted.parse(room.board);
             const newBoard = new Board (tmp._size);
             for (let i = 0; i < newBoard._size; ++i)
@@ -124,8 +95,8 @@ export default function  Game (props) {
                     }
                 }
             }
-            console.log(newBoard);
             setBoard(newBoard);
+            setUpdate(true);
             console.log("JoinRoom");
             await fetch('/room', {
                 method: 'POST',
@@ -141,14 +112,146 @@ export default function  Game (props) {
             return false;
         }
     }
-    
+
+    async function updatePlayers() {
+        try {
+            const response = await fetch('/room/' + props.roomId);
+            const room = await response.json();
+            if (blackPlayer._name === "" && room.firstPlayer !== "") {
+                blackPlayer._name = room.firstPlayer;
+            }
+            if (whitePlayer._name === "" && room.secondPlayer !== "") {
+                whitePlayer._name = room.secondPlayer;
+                setActive(true);
+            }
+            setHighlight(true);
+            console.log("UpdatePlayers");
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
+        }
+    }
+
+    async function updateBoard() {
+        if (!gameOver) {
+            if (currentPlayer._name !== props.name && update) {
+                try {
+                    const response = await fetch('/room/' + props.roomId);
+                    const room = await response.json();
+                    if (room.firstTurnFinished && room.secondTurnFinished) {
+                        setWinner(currentPlayer === blackPlayer ? whitePlayer : blackPlayer);
+                        setGameOver(true);
+                        console.log("game over");
+                    }
+                    const tmp = flatted.parse(room.board);
+                    const newBoard = new Board(tmp._size);
+                    for (let i = 0; i < newBoard._size; ++i) {
+                        for (let j = 0; j < newBoard._size; ++j) {
+                            const cell = tmp._cells[i][j];
+                            if (cell._figure !== null) {
+                                new Figure(cell._figure._color, newBoard._cells[i][j]);
+                            }
+                        }
+                    }
+                    setBoard(newBoard);
+                    if (!(room.firstTurnFinished && room.secondTurnFinished)) {
+                        if (props.name === whitePlayer._name) {
+                            if (room.firstTurnFinished && room.currentPlayer === props.name) {
+                                setUpdate(false);
+                                swapPlayers();
+                                setHighlight(true);
+                            }
+                        } else if (props.name === blackPlayer._name) {
+                            if (room.secondTurnFinished && room.currentPlayer === props.name) {
+                                setUpdate(false);
+                                swapPlayers();
+                                setHighlight(true);
+                            }
+                        }
+                    }
+                    console.log("UpdateBoard");
+                } catch (error) {
+                    console.error('Failed to fetch data:', error);
+                }
+            }
+        }
+    }
+
+    async function postBoard(turnFinished) {
+        await fetch('/room', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                roomId: props.roomId,
+                firstPlayer: blackPlayer._name,
+                secondPlayer: whitePlayer._name,
+                currentPlayer: turnFinished ? (props.name === blackPlayer._name ? whitePlayer._name : blackPlayer._name) : (props.name === blackPlayer._name ? blackPlayer._name : whitePlayer._name),
+                board: flatted.stringify(board),
+                firstTurnFinished: props.name === blackPlayer._name ? turnFinished : false,
+                secondTurnFinished: props.name === whitePlayer._name ? turnFinished : false
+            })
+        });
+        setUpdate(turnFinished);
+        if (turnFinished) {
+            setHighlight(false);
+        }
+        console.log("PostBoard");
+    }
+
+    async function finishBoard() {
+        await fetch('/room', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                roomId: props.roomId,
+                firstPlayer: blackPlayer._name,
+                secondPlayer: whitePlayer._name,
+                currentPlayer: props.name,
+                board: flatted.stringify(board),
+                firstTurnFinished: true,
+                secondTurnFinished: true
+            })
+        });
+        console.log("FinishBoard");
+    }
+
+    useInterval(() => {(blackPlayer._name === "" || whitePlayer._name === "") ? updatePlayers() : updateBoard() }, 500)
+
+    function swapPlayers() {
+        setCurrentPlayer(currentPlayer._color === Colors.WHITE ? blackPlayer : whitePlayer);
+    }
+
+    async function endGame(currentPlayer) {
+        setWinner(currentPlayer === blackPlayer ? whitePlayer : blackPlayer);
+        finishBoard(currentPlayer);
+        setGameOver(true);
+        console.log("end game");
+        if (!winnerFlag) {
+            setWinnerFlag(true);
+            let name = currentPlayer === blackPlayer ? whitePlayer._name : blackPlayer._name;
+            const response = await fetch('/user/' + name);
+            const user = await response.json();
+            let wins = user.wins + 1;
+            fetch('/user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name: name, wins: wins })
+            });
+        }
+    }
+
     return (
         <>
             {redirect === true ? <Navigate to='/' replace={true}/> :
                 gameOver === true ?             <>
                         <div className="myModal" >
                             <div className="myModalContent">
-                                <h3>Game over!<br/> Winner is: {winner._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
+                                <h3>Game over!<br/> Winner is: {winner._color === Colors.WHITE ? whitePlayer._name : blackPlayer._name}</h3>
                                 <div className="custom">
                                     <button className="btn btn-primary chs-btn-center" onClick={() => setRedirect(true)}>Go Home</button>
                                 </div>
@@ -169,11 +272,11 @@ export default function  Game (props) {
                                     swapPlayers={swapPlayers}
                                     endGame={endGame}
                                     name={props.name}
-                                    roomId={props.roomId}
-                                    postRoom={postRoom}
-                                    getRoom={getRoom}
                                     firstPlayer={blackPlayer._name}
                                     secondPlayer={whitePlayer._name}
+                                    postBoard={postBoard}
+                                    update={update}
+                                    highlight={highlight}
                                 />
                             </div>
                         </>
@@ -195,11 +298,11 @@ export default function  Game (props) {
                                         swapPlayers={swapPlayers}
                                         endGame={endGame}
                                         name={props.name}
-                                        roomId={props.roomId}
-                                        postRoom={postRoom}
-                                        getRoom={getRoom}
                                         firstPlayer={blackPlayer._name}
                                         secondPlayer={whitePlayer._name}
+                                        postBoard={postBoard}
+                                        update={update}
+                                        highlight={highlight}
                                     />
                                 </div>
                             </>

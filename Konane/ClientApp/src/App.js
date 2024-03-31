@@ -51,7 +51,7 @@ export default class App extends Component {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ name: name })
+            body: JSON.stringify({ name: name, wins: 0 })
         });
         console.log("UserPost");
     }

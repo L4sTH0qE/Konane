@@ -33,6 +33,7 @@ export default function InitGame() {
     
     async function checkRoomInput(roomInput) {
         const json = await getRoom(roomInput);  // command waits until completion
+        console.log(json);
         if (json === "No room with such ID") {
             setRoomError("No room with such ID");
         } else {

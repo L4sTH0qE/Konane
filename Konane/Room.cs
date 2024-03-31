@@ -14,5 +14,9 @@ namespace Konane
         public string? CurrentPlayer { get; set; }
         
         public string? Board { get; set; }
+        
+        public bool FirstTurnFinished { get; set; }
+        
+        public bool SecondTurnFinished { get; set; }
     }
 }

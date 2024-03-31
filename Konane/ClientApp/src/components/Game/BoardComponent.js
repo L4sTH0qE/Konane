@@ -5,7 +5,7 @@ import logo_white from "../../assets/checkers_top_white.png"
 import logo_black from "../../assets/checkers_top_black.png"
 import {Card, CardContent, Typography} from "@mui/material";
 
-const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, roomId, postRoom, getRoom, firstPlayer, secondPlayer}) => {
+const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, firstPlayer, secondPlayer, postBoard, highlight}) => {
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellsToChoose, setCellsToChoose] = useState(0);
 
@@ -17,34 +17,37 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
                     cell.deleteFigure();
                     currentPlayer._isFirstTurn = false;
                     swapPlayers();
-                    setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose+ 1 : cellsToChoose - 1);
+                    postBoard(true);
                 }
             }
             if (selectedCell && selectedCell === cell) {
                 setSelectedCell(null);
-                setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose+ 1 : cellsToChoose - 1);
+                setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose + 1 : cellsToChoose - 1);
+                postBoard(false);
             }
             if (selectedCell && selectedCell !== cell && selectedCell?._figure?.canMove(cell)) {
                 swapPlayers();
                 selectedCell.moveFigure(cell);
                 setSelectedCell(null);
-                setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose+ 1 : cellsToChoose - 1);
+                postBoard(true);
             }
             if (!selectedCell && cell?._figure !== null && cell._figure?._color === currentPlayer?._color) {
                 setSelectedCell(cell);
+                postBoard(false);
             }
         }
     }
 
     function highlightCellsToChoose() {
         if (typeof board.highlightCellsToChoose === 'function') {
-
+            console.log("component-highlight");
             let flag = board.highlightCellsToChoose(currentPlayer);
-            updateBoard();
             if (flag) {
                 if (typeof endGame === 'function') {
                     endGame(currentPlayer);
                 }
+            } else {
+                updateBoard();
             }
         }
     }
@@ -67,6 +70,17 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
     }, [selectedCell]);
 
     useEffect(() => {
+        if (highlight) {
+            try {
+                highlightCellsToChoose();
+            }
+            catch (error) {
+                console.log("highlight error");
+            }
+        }
+    }, [highlight]);
+
+    useEffect(() => {
         highlightCellsToChoose();
     }, [cellsToChoose]);
 
@@ -74,7 +88,7 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
         while (board === null) {
         }
     }, []);
-
+    
     return (
         <div>
             <div className={board._size === 6 ? "board6" : board._size === 8 ? "board8" : "board10"}>

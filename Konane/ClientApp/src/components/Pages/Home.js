@@ -11,12 +11,11 @@ export default function Home (props) {
     }, [props.username]);
 
     async function updateWins() {
-
         try {
             const response = await fetch('/user/' + username);
             const user = await response.json();
             if (username !== props.username || wins !== user.wins) {
-                setUsername(user.username);
+                setUsername(user.name);
                 setWins(user.wins);
                 console.log("WinsUpdate");
             }
@@ -25,7 +24,7 @@ export default function Home (props) {
         }
     }
 
-    useInterval(() => updateWins(), 20000)
+    useInterval(() => updateWins(), 5000)
 
     return (
         <>
