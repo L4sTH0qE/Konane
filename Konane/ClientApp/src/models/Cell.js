@@ -1,5 +1,3 @@
-import React from 'react';
-
 export class Cell
 {
     constructor(board, x, y, color, figure)

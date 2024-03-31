@@ -1,5 +1,3 @@
-import logo_white from "../assets/checkers_top_white.png"
-import logo_black from "../assets/checkers_top_black.png"
 import {Colors} from "./Colors"
 export class Figure
 {

@@ -28,12 +28,6 @@ namespace Konane
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller}/{id?}");
-            
-            /*app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHub<NotificationHub>("/user");
-            });*/
-
             app.MapFallbackToFile("index.html");
             app.Run();
         }

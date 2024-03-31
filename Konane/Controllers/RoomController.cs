@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Konane.Controllers
 {
@@ -7,19 +6,18 @@ namespace Konane.Controllers
     public class RoomController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
-        private readonly IHubContext<NotificationHub> _hubContext;
         private static Dictionary<string, Room> _rooms = new Dictionary<string, Room>();
 
-        public RoomController(IHubContext<NotificationHub> hubContext, ILogger<UserController> logger)
+        public RoomController(ILogger<UserController> logger)
         {
             _logger = logger;
-            _hubContext = hubContext;
         }
         
         [HttpGet]
         [Route("[controller]")]
         public IEnumerable<Room> Get()
         {
+            _logger.LogInformation("Get Rooms");
             return _rooms.Values;
         }
 
@@ -27,6 +25,7 @@ namespace Konane.Controllers
         [Route("[controller]/{roomId}")]
         public Room? Get(string roomId)
         {
+            _logger.LogInformation("Get Room");
             return !_rooms.TryGetValue(roomId, out Room? room) ? null : _rooms[roomId];
         }
 
@@ -36,20 +35,18 @@ namespace Konane.Controllers
         {
             if (room.RoomId == null)
             {
-                _hubContext.Clients.All.SendAsync("NotAddRoom", room.RoomId);
                 return Ok(room.RoomId);
             }
             _rooms.TryGetValue(room.RoomId, out Room? testRoom);
-            if (testRoom == null || _rooms[room.RoomId].Status == "Finished")
+            _logger.LogInformation("Post Room");
+            if (testRoom == null)
             {
                 room.Status = "Waiting";
                 _rooms[room.RoomId] = room;
-                _hubContext.Clients.All.SendAsync("AddRoom", room.RoomId);
                 return Ok(room.RoomId);
             } else if (_rooms[room.RoomId].Status == "Waiting") {
                 room.Status = "Active";
                 _rooms[room.RoomId] = room;
-                _hubContext.Clients.All.SendAsync("AddRoom", room.RoomId);
                 return Ok(room.RoomId);
             } else if (_rooms[room.RoomId].Status == "Active") {
                 room.Status = "Active";
@@ -58,10 +55,8 @@ namespace Konane.Controllers
                     room.Status = "Finished";
                 }
                 _rooms[room.RoomId] = room;
-                _hubContext.Clients.All.SendAsync("UpdateRoom", room.RoomId);
                 return Ok(room.RoomId);
             } 
-            _hubContext.Clients.All.SendAsync("NotAddRoom", room.RoomId);
             return Ok(room.RoomId);
         }
     }

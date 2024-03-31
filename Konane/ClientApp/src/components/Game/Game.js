@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import BoardComponent from "./BoardComponent";
 import {Board} from "../../models/Board";
 import {Player} from "../../models/Player";
@@ -76,7 +76,7 @@ export default function  Game (props) {
             }
             setBlackPlayer(newBlackPlayer);
             setWhitePlayer(newWhitePlayer);
-            
+
             if (room.currentPlayer === "") {
                 setCurrentPlayer(newWhitePlayer);
             } else {

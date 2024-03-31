@@ -1,18 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 
 namespace Konane.Controllers
 {
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ILogger<UserController> _logger;
         private static List<User> _users = new List<User>();
 
-        public UserController(IHubContext<NotificationHub> hubContext, ILogger<UserController> logger)
+        public UserController(ILogger<UserController> logger)
         {
-            _hubContext = hubContext;
             _logger = logger;
         }
 
@@ -20,6 +17,7 @@ namespace Konane.Controllers
         [Route("[controller]")]
         public IEnumerable<User> Get()
         {
+            _logger.LogInformation("Get Users");
             return _users;
         }
         
@@ -27,7 +25,7 @@ namespace Konane.Controllers
         [Route("[controller]/{name}")]
         public User? Get(string name)
         {        
-            Console.WriteLine("UserGet");
+            _logger.LogInformation("Get User");
             return _users.Find(x => x.Name == name);
         }
 
@@ -48,8 +46,7 @@ namespace Konane.Controllers
                     _users[index].Wins = user.Wins;
                 }
             }
-            _hubContext.Clients.All.SendAsync("AddUser", user);
-            Console.WriteLine("UserPost");
+            _logger.LogInformation("Post User");
             return Ok(user);
         }
     }

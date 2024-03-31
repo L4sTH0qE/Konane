@@ -1,9 +1,5 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import CellComponent from "./CellComponent";
-import {Colors} from "../../models/Colors";
-import logo_white from "../../assets/checkers_top_white.png"
-import logo_black from "../../assets/checkers_top_black.png"
-import {Card, CardContent, Typography} from "@mui/material";
 
 const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, firstPlayer, secondPlayer, postBoard, highlight}) => {
     const [selectedCell, setSelectedCell] = useState(null);
@@ -88,7 +84,7 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
         while (board === null) {
         }
     }, []);
-    
+
     return (
         <div>
             <div className={board._size === 6 ? "board6" : board._size === 8 ? "board8" : "board10"}>

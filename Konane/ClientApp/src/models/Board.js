@@ -1,4 +1,3 @@
-import React from 'react';
 import {Cell} from "./Cell";
 import {Colors} from "./Colors";
 import {Figure} from "./Figure";
@@ -7,22 +6,22 @@ export class Board
 {
     constructor(size)
     {
-            this._size = size !== null ? size : 8;
-            const cells = []
-            for (let i = 0; i < size; ++i)
+        this._size = size !== null ? size : 8;
+        const cells = []
+        for (let i = 0; i < size; ++i)
+        {
+            const row = [];
+            for (let j = 0; j < size; ++j)
             {
-                const row = [];
-                for (let j = 0; j < size; ++j)
-                {
-                    if (((i + j) % 2) === 0) {
-                        row.push(new Cell(this, j, i, Colors.WHITE, null));
-                    } else {
-                        row.push(new Cell(this, j, i, Colors.BLACK, null));
-                    }
+                if (((i + j) % 2) === 0) {
+                    row.push(new Cell(this, j, i, Colors.WHITE, null));
+                } else {
+                    row.push(new Cell(this, j, i, Colors.BLACK, null));
                 }
-                cells.push(row);
             }
-            this._cells = cells;
+            cells.push(row);
+        }
+        this._cells = cells;
     }
 
     getCell(x, y) {

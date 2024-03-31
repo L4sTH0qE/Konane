@@ -1,15 +1,9 @@
 import { Button, Stack, TextField } from "@mui/material";
 import React, { useState } from "react";
 import CustomDialog from "../CustomDialog";
-import {Colors} from "../../models/Colors";
-import logo_white from "../../assets/checkers_top_white.png";
-import logo_black from "../../assets/checkers_top_black.png";
-import {Navigate, useLocation} from "react-router-dom";
-import {Game} from "../Game/Game";
-import {Board} from "../../models/Board";
+import {Navigate} from "react-router-dom";
 import logo_bot from "../../assets/gamemode_pve.png";
 import logo_player from "../../assets/gamemode_pvp.png";
-import flatted from "flatted";
 const { v4: uuidV4 } = require('uuid');
 
 export default function InitGame() {
@@ -28,14 +22,16 @@ export default function InitGame() {
         return fetch('/room/' + roomId)
             .then((response)=>response.json())
             .then((responseJson)=>{return responseJson})
-            .catch(() => {console.log('some error'); return "No room with such ID";});
+            .catch(() => {return "No room with such ID";});
     }
-    
+
     async function checkRoomInput(roomInput) {
         const json = await getRoom(roomInput);  // command waits until completion
         console.log(json);
         if (json === "No room with such ID") {
             setRoomError("No room with such ID");
+        } else if (json.status === "Finished") {
+            setRoomError("Room with such ID is closed");
         } else {
             setData({roomId: roomInput, size: size, bot: bot, isFirst: isFirst});
             setRoomDialogOpen(false); // close dialog
