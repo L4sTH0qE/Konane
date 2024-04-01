@@ -44,7 +44,7 @@ namespace Konane.Controllers
                 room.Status = "Waiting";
                 _rooms[room.RoomId] = room;
                 return Ok(room.RoomId);
-            } else if (_rooms[room.RoomId].Status == "Waiting") {
+            } else if (_rooms[room.RoomId].Status == "Waiting" && room.SecondPlayer != "") {
                 room.Status = "Active";
                 _rooms[room.RoomId] = room;
                 return Ok(room.RoomId);

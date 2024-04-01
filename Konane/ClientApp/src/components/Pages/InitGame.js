@@ -6,7 +6,7 @@ import logo_bot from "../../assets/gamemode_pve.png";
 import logo_player from "../../assets/gamemode_pvp.png";
 const { v4: uuidV4 } = require('uuid');
 
-export default function InitGame() {
+export default function InitGame(props) {
     const [roomDialogOpen, setRoomDialogOpen] = useState(false);
     const [roomInput, setRoomInput] = useState("");
     const [roomError, setRoomError] = useState("");
@@ -32,6 +32,8 @@ export default function InitGame() {
             setRoomError("No room with such ID");
         } else if (json.status === "Finished") {
             setRoomError("Room with such ID is closed");
+        } else if (json.status === "Active" && json.firstPlayer !== props.username && json.secondPlayer !== props.username) {
+            setRoomError("Room with such ID is active");
         } else {
             setData({roomId: roomInput, size: size, bot: bot, isFirst: isFirst});
             setRoomDialogOpen(false); // close dialog

@@ -99,10 +99,10 @@ export default class App extends Component {
                 </CustomDialog>
                 <Layout>
                     <Routes>
-                        <Route key={true} path='/' element={<Home username={this.state.username} wins={this.state.wins}/>} />;
-                        <Route path='/rules' element={<Rules username={this.state.username}/>} />;
-                        <Route path='/game-options' element={<InitGame username={this.state.username}/>} />;
-                        <Route path='/game-room' element={<GameOptions username={this.state.username}/>} />;
+                        <Route key={true} path='/' element={this.state.usernameSubmitted ? <Home username={this.state.username} wins={this.state.wins}/> : <> </>} />;
+                        <Route path='/rules' element={this.state.usernameSubmitted ? <Rules username={this.state.username}/> : <> </>} />;
+                        <Route path='/game-options' element={this.state.usernameSubmitted ? <InitGame username={this.state.username}/> : <> </>} />;
+                        <Route path='/game-room' element={this.state.usernameSubmitted ? <GameOptions username={this.state.username}/> : <> </>} />;
                     </Routes>
                 </Layout>
             </>

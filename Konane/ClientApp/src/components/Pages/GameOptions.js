@@ -9,7 +9,14 @@ const GameOptions = (props) => {
 
     return (
         <>
-            <Game size={location.state.size} roomId={location.state.roomId} isBot={location.state.bot} name={props.username} isFirst={location.state.isFirst}/>
+            { location.state === null ? <></> : 
+            <Game 
+                size={location.state.size} 
+                roomId={location.state.roomId} 
+                isBot={location.state.bot} 
+                name={props.username} 
+                isFirst={location.state.isFirst}
+            /> }
         </>
     );
 };

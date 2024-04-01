@@ -28,7 +28,14 @@ export default function  Game (props) {
     const [winnerFlag, setWinnerFlag] = useState(false);
 
     useMemo(() => {
-        joinRoom(props.roomId);
+        if (props.name !== null) {
+            console.log(props.name);
+            if (!props.isBot) {
+                joinRoom(props.roomId);
+            } else {
+                createBotRoom();
+            }
+        }
     }, []);
 
     useEffect(() => {
@@ -37,12 +44,16 @@ export default function  Game (props) {
         }
     }, [generate]);
 
+    function createBotRoom() {
+        console.log("CreateBotRoom");
+    }
+
     async function createRoom() {
         const newBlackPlayer = new Player (Colors.BLACK);
         const newWhitePlayer = new Player (Colors.WHITE);
         newBlackPlayer._name = props.name;
         newBlackPlayer._isBot = false;
-        newWhitePlayer._isBot = props.isBot;
+        newWhitePlayer._isBot = false;
         setBlackPlayer(newBlackPlayer);
         setWhitePlayer(newWhitePlayer);
         setCurrentPlayer(newBlackPlayer);
@@ -69,19 +80,17 @@ export default function  Game (props) {
             newBlackPlayer._isBot = false;
             const newWhitePlayer = new Player (Colors.WHITE);
             newWhitePlayer._isBot = false;
-            if (room.secondPlayer === props.name || room.secondPlayer === "") {
+            if (room.secondPlayer === props.name || (room.secondPlayer === "" && room.firstPlayer !== props.name && props.name !== "" && props.name !== null)) {
+                console.log("1");
                 newWhitePlayer._name = props.name;
             } else {
+                console.log("2");
                 newWhitePlayer._name = room.secondPlayer;
             }
             setBlackPlayer(newBlackPlayer);
             setWhitePlayer(newWhitePlayer);
-
-            if (room.currentPlayer === "") {
-                setCurrentPlayer(newWhitePlayer);
-            } else {
-                room.currentPlayer === newBlackPlayer._name ? setCurrentPlayer(newBlackPlayer) : setCurrentPlayer(newWhitePlayer);
-            }
+            
+            room.currentPlayer === newBlackPlayer._name ? setCurrentPlayer(newBlackPlayer) : setCurrentPlayer(newWhitePlayer);
 
             const tmp = flatted.parse(room.board);
             const newBoard = new Board (tmp._size);
@@ -96,15 +105,20 @@ export default function  Game (props) {
                 }
             }
             setBoard(newBoard);
-            setUpdate(true);
+            if (room.currentPlayer !== props.name && props.name !== null) {
+                console.log("update");
+                setUpdate(true);
+            }
             console.log("JoinRoom");
-            await fetch('/room', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ roomId: roomId, firstPlayer: newBlackPlayer._name, secondPlayer: newWhitePlayer._name, currentPlayer: newBlackPlayer._name, board: flatted.stringify(newBoard) })
-            });
+            if(room.status === "Waiting" && newWhitePlayer._name !== "" && newWhitePlayer._name !== null) {
+                await fetch('/room', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ roomId: roomId, firstPlayer: newBlackPlayer._name, secondPlayer: newWhitePlayer._name, currentPlayer: newBlackPlayer._name, board: flatted.stringify(newBoard) })
+                });
+            }
             return true;
         } catch (error) {
             setGenerate(true);
@@ -218,7 +232,7 @@ export default function  Game (props) {
         console.log("FinishBoard");
     }
 
-    useInterval(() => {(blackPlayer._name === "" || whitePlayer._name === "") ? updatePlayers() : updateBoard() }, 500)
+    useInterval(() => {(blackPlayer._name === "" || whitePlayer._name === "") ? updatePlayers() : updateBoard() }, 1000)
 
     function swapPlayers() {
         setCurrentPlayer(currentPlayer._color === Colors.WHITE ? blackPlayer : whitePlayer);
@@ -260,7 +274,7 @@ export default function  Game (props) {
                         <>
                             <Card>
                                 <CardContent>
-                                    <Typography variant="h5">Room ID: {props.roomId}</Typography>
+                                    <Typography variant="h5">Room ID: {props.isBot ? "private" : props.roomId}</Typography>
                                 </CardContent>
                             </Card>
                             <h3 className="player-turn">Players: {blackPlayer._name}, {whitePlayer._name}. {'\u00A0'} Current turn: {currentPlayer._name} {'\u00A0'} {currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
