@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React, {useEffect, useState, } from 'react';
+import {Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import {TextField} from "@mui/material";
 import './custom.css';
 import { Layout } from './components/Layout';
@@ -9,43 +9,21 @@ import Rules from "./components/Pages/Rules";
 import InitGame from "./components/Pages/InitGame";
 import GameOptions from "./components/Pages/GameOptions";
 
-export default class App extends Component {
-    static displayName = App.name;
+export default function App(props) {
+    const [username, setUsername] = useState("");
+    const [usernameSubmitted, setUsernameSubmitted] = useState(false);
+    const [wins, setWins] = useState(0);
 
-    constructor(props) {
-        super(props);
-        this.state = {username: String, usernameSubmitted: Boolean, wins: Number};
-        this.setUsername = this.setUsername.bind(this);
-        this.setWins = this.setWins.bind(this);
-        this.setUsernameSubmitted = this.setUsernameSubmitted.bind(this);
-        this.addUser = this.addUser.bind(this);
-    }
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    componentDidMount() {
-        this.setUsername('');
-        this.setUsernameSubmitted(false);
-        this.setWins(0);
-    }
+    useEffect(() => {
+        if (location.pathname === "/game-room") {
+            navigate("/game-options");
+        }
+    }, []);
 
-    setUsername(username) {
-        this.setState({
-            username: username
-        });
-    }
-
-    setUsernameSubmitted(usernameSubmitted) {
-        this.setState({
-            usernameSubmitted: usernameSubmitted
-        });
-    }
-
-    setWins(wins) {
-        this.setState({
-            wins: wins
-        });
-    }
-
-    async addUser(name) {
+    async function addUser(name) {
         await fetch('/user', {
             method: 'POST',
             headers: {
@@ -56,12 +34,13 @@ export default class App extends Component {
         console.log("UserPost");
     }
 
-    async getUser(name) {
+    async function getUser(name) {
         try {
             const response = await fetch('/user/' + name);
             const user = await response.json();
-            if (this.state.username !== user.name || this.state.wins !== user.wins) {
-                this.setState({user: user, wins: user.wins});
+            if (username !== user.name || wins !== user.wins) {
+                setWins(user.wins);
+                setUsername(user.name);
             }
             console.log("UserGet");
         } catch (error) {
@@ -69,18 +48,17 @@ export default class App extends Component {
         }
     }
 
-    render() {
-        return (
-            <>
+    return (
+        <>
                 <CustomDialog
-                    open={!this.state.usernameSubmitted} // leave open if username has not been selected
+                    open={!usernameSubmitted} // leave open if username has not been selected
                     title="Pick a username" // Title of dialog
                     contentText="Please select a username" // content text of dialog
                     handleContinue={() => { // fired when continue is clicked
-                        if (!this.state.username) return; // if username hasn't been entered, do nothing
-                        this.addUser(this.state.username);
-                        this.getUser(this.state.username);
-                        this.setUsernameSubmitted(true); // indicate that username has been submitted
+                        if (!username) return; // if username hasn't been entered, do nothing
+                        addUser(username);
+                        getUser(username);
+                        setUsernameSubmitted(true); // indicate that username has been submitted
                     }}
                 >
                     <TextField // Input
@@ -89,23 +67,22 @@ export default class App extends Component {
                         id="username"
                         label="Username"
                         name="username"
-                        value={this.state.username}
+                        value={username}
                         required
-                        onChange={(e) => this.setUsername(e.target.value)} // update username state with value
+                        onChange={(e) => setUsername(e.target.value)} // update username state with value
                         type="text"
                         fullWidth
                         variant="standard"
                     />
                 </CustomDialog>
-                <Layout>
-                    <Routes>
-                        <Route key={true} path='/' element={this.state.usernameSubmitted ? <Home username={this.state.username} wins={this.state.wins}/> : <> </>} />;
-                        <Route path='/rules' element={this.state.usernameSubmitted ? <Rules username={this.state.username}/> : <> </>} />;
-                        <Route path='/game-options' element={this.state.usernameSubmitted ? <InitGame username={this.state.username}/> : <> </>} />;
-                        <Route path='/game-room' element={this.state.usernameSubmitted ? <GameOptions username={this.state.username}/> : <> </>} />;
-                    </Routes>
-                </Layout>
-            </>
-        );
-    }
+            <Layout>
+                <Routes>
+                    <Route key={true} path='/' element={usernameSubmitted ? <Home username={username} wins={wins}/> : <> </>} />;
+                    <Route path='/rules' element={usernameSubmitted ? <Rules username={username}/> : <> </>} />;
+                    <Route path='/game-options' element={usernameSubmitted ? <InitGame username={username}/> : <> </>} />;
+                    <Route path='/game-room' element={usernameSubmitted ? <GameOptions username={username}/> : <> </>} />;
+                </Routes>
+            </Layout>
+        </>
+    );
 }

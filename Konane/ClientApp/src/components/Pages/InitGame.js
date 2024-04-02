@@ -96,7 +96,7 @@ export default function InitGame(props) {
                         }}>Player vs Bot</button>
                         <button className="btn btn-primary chs-btn-center" onClick={() => {
                             setStart(true);
-                            setData({roomId: roomId, size: size, bot: bot, isFirst: isFirst});
+                            setData({roomId: bot ? "private" : roomId, size: size, bot: bot, isFirst: isFirst});
                         }}>START A GAME</button>
                         <button className="btn btn-primary chs-btn-right" onClick={() => {
                             setBot(false);

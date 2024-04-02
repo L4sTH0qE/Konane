@@ -12,3 +12,11 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+.background {
+  z-index: 1;
+  background-image: url("./assets/background.png");
+  background-size: 100%;
+  background-position: 0;
+  background-color: transparent;
+}

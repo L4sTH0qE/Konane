@@ -4,6 +4,7 @@ import CellComponent from "./CellComponent";
 const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, firstPlayer, secondPlayer, postBoard, highlight}) => {
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellsToChoose, setCellsToChoose] = useState(0);
+    const [endFlag, setEndFlag] = useState(true);
 
     function click(cell) {
         console.log("click!");
@@ -38,8 +39,9 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
         if (typeof board.highlightCellsToChoose === 'function') {
             console.log("component-highlight");
             let flag = board.highlightCellsToChoose(currentPlayer);
-            if (flag) {
+            if (flag && endFlag) {
                 if (typeof endGame === 'function') {
+                    setEndFlag(false);
                     endGame(currentPlayer);
                 }
             } else {

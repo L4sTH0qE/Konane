@@ -42,14 +42,30 @@ namespace Konane.Controllers
             if (testRoom == null)
             {
                 room.Status = "Waiting";
+                room.FirstFirstTurn = true;
+                room.SecondFirstTurn = true;
                 _rooms[room.RoomId] = room;
                 return Ok(room.RoomId);
             } else if (_rooms[room.RoomId].Status == "Waiting" && room.SecondPlayer != "") {
                 room.Status = "Active";
+                room.FirstFirstTurn = true;
+                room.SecondFirstTurn = true;
                 _rooms[room.RoomId] = room;
                 return Ok(room.RoomId);
             } else if (_rooms[room.RoomId].Status == "Active") {
                 room.Status = "Active";
+                bool firstTurn = _rooms[room.RoomId].FirstFirstTurn;
+                bool secondTurn = _rooms[room.RoomId].SecondFirstTurn;
+                if (room.CurrentPlayer == room.FirstPlayer && room.SecondTurnFinished)
+                {
+                    secondTurn = false;
+                }
+                if (room.CurrentPlayer == room.SecondPlayer && room.FirstTurnFinished)
+                {
+                    firstTurn = false;
+                }
+                room.FirstFirstTurn = firstTurn;
+                room.SecondFirstTurn = secondTurn;
                 if (room.FirstTurnFinished && room.SecondTurnFinished)
                 {
                     room.Status = "Finished";

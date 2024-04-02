@@ -40,6 +40,7 @@
     background: white;
     border-radius: 16px;
     min-width: 650px;
+    white-space: nowrap;
 }
 
 h3 {

@@ -18,5 +18,9 @@ namespace Konane
         public bool FirstTurnFinished { get; set; }
         
         public bool SecondTurnFinished { get; set; }
+        
+        public bool FirstFirstTurn { get; set; }
+        
+        public bool SecondFirstTurn { get; set; }
     }
 }

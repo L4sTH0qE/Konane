@@ -28,13 +28,10 @@ export default function  Game (props) {
     const [winnerFlag, setWinnerFlag] = useState(false);
 
     useMemo(() => {
-        if (props.name !== null) {
-            console.log(props.name);
-            if (!props.isBot) {
-                joinRoom(props.roomId);
-            } else {
-                createBotRoom();
-            }
+        if (!props.isBot) {
+            joinRoom(props.roomId);
+        } else {
+            createBotRoom();
         }
     }, []);
 
@@ -80,16 +77,16 @@ export default function  Game (props) {
             newBlackPlayer._isBot = false;
             const newWhitePlayer = new Player (Colors.WHITE);
             newWhitePlayer._isBot = false;
-            if (room.secondPlayer === props.name || (room.secondPlayer === "" && room.firstPlayer !== props.name && props.name !== "" && props.name !== null)) {
-                console.log("1");
+            if (room.secondPlayer === "" && room.firstPlayer !== props.name) {
                 newWhitePlayer._name = props.name;
             } else {
-                console.log("2");
                 newWhitePlayer._name = room.secondPlayer;
+                newBlackPlayer._isFirstTurn = room.firstFirstTurn;
+                newWhitePlayer._isFirstTurn = room.secondFirstTurn;
             }
             setBlackPlayer(newBlackPlayer);
             setWhitePlayer(newWhitePlayer);
-            
+
             room.currentPlayer === newBlackPlayer._name ? setCurrentPlayer(newBlackPlayer) : setCurrentPlayer(newWhitePlayer);
 
             const tmp = flatted.parse(room.board);
@@ -105,12 +102,12 @@ export default function  Game (props) {
                 }
             }
             setBoard(newBoard);
-            if (room.currentPlayer !== props.name && props.name !== null) {
+            if (room.currentPlayer !== props.name) {
                 console.log("update");
                 setUpdate(true);
             }
             console.log("JoinRoom");
-            if(room.status === "Waiting" && newWhitePlayer._name !== "" && newWhitePlayer._name !== null) {
+            if(room.status === "Waiting" && newWhitePlayer._name !== "") {
                 await fetch('/room', {
                     method: 'POST',
                     headers: {
@@ -128,25 +125,27 @@ export default function  Game (props) {
     }
 
     async function updatePlayers() {
-        try {
-            const response = await fetch('/room/' + props.roomId);
-            const room = await response.json();
-            if (blackPlayer._name === "" && room.firstPlayer !== "") {
-                blackPlayer._name = room.firstPlayer;
+        if (!props.isBot) {
+            try {
+                const response = await fetch('/room/' + props.roomId);
+                const room = await response.json();
+                if (blackPlayer._name === "" && room.firstPlayer !== "") {
+                    blackPlayer._name = room.firstPlayer;
+                }
+                if (whitePlayer._name === "" && room.secondPlayer !== "") {
+                    whitePlayer._name = room.secondPlayer;
+                    setActive(true);
+                }
+                setHighlight(true);
+                console.log("UpdatePlayers");
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
             }
-            if (whitePlayer._name === "" && room.secondPlayer !== "") {
-                whitePlayer._name = room.secondPlayer;
-                setActive(true);
-            }
-            setHighlight(true);
-            console.log("UpdatePlayers");
-        } catch (error) {
-            console.error('Failed to fetch data:', error);
         }
     }
 
     async function updateBoard() {
-        if (!gameOver) {
+        if (!gameOver && !props.isBot) {
             if (currentPlayer._name !== props.name && update) {
                 try {
                     const response = await fetch('/room/' + props.roomId);
@@ -267,7 +266,7 @@ export default function  Game (props) {
                             <div className="myModalContent">
                                 <h3>Game over!<br/> Winner is: {winner._color === Colors.WHITE ? whitePlayer._name : blackPlayer._name}</h3>
                                 <div className="custom">
-                                    <button className="btn btn-primary chs-btn-center" onClick={() => setRedirect(true)}>Go Home</button>
+                                    <button className="btn btn-primary end-btn-center" onClick={() => setRedirect(true)}>Go Home</button>
                                 </div>
                             </div>
                         </div>
