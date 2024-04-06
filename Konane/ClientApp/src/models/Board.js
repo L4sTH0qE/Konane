@@ -2,8 +2,7 @@ import {Cell} from "./Cell";
 import {Colors} from "./Colors";
 import {Figure} from "./Figure";
 
-export class Board
-{
+export class Board {
     constructor(size)
     {
         this._size = size !== null ? size : 8;

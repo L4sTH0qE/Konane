@@ -5,7 +5,7 @@ import {Player} from "../../models/Player";
 import {Figure} from "../../models/Figure";
 import {Colors} from "../../models/Colors";
 import {Navigate} from "react-router-dom";
-import {Card, CardContent, Typography} from "@mui/material";
+import {Box, Button, Card, CardContent, Typography} from "@mui/material";
 import "./Game.css";
 import logo_white from "../../assets/checkers_top_white.png";
 import logo_black from "../../assets/checkers_top_black.png";
@@ -282,7 +282,12 @@ export default function  Game (props) {
                             <div className="myModalContent">
                                 <h3>Game over!<br/> Winner is: {winner._color === Colors.WHITE ? whitePlayer._name : blackPlayer._name}</h3>
                                 <div className="custom">
-                                    <button className="btn btn-primary end-btn-center" onClick={() => setRedirect(true)}>Go Home</button>
+                                    <Box textAlign='center' display='flex' justifyContent='space-between'>
+                                        <Button variant="contained" onClick={() => {
+                                            setRedirect(true);
+                                        }}>Return to Home Page 
+                                        </Button>
+                                    </Box>
                                 </div>
                             </div>
                         </div>

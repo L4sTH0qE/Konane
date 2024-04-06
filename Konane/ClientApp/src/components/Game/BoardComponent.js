@@ -60,53 +60,53 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
         }
     }
 
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    
     function botMakeTurn() {
         if (currentPlayer._isBot === true) {
             setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose + 1 : cellsToChoose - 1);
             if (currentPlayer._isFirstTurn === true) {
                 setTimeout(function() {
+                    let cells = [];
                     for (let i = 0; i < board._size; ++i) {
                         for (let j = 0; j < board._size; ++j) {
                             if (board.getCell(j, i)._available === true) {
-                                board.getCell(j, i).deleteFigure();
-                                currentPlayer._isFirstTurn = false;
-                                swapPlayers();
-                                setBotTurn(!botTurn);
-                                return;
+                                cells.push(board.getCell(j, i));
                             }
                         }
+                    }
+                    if (cells.length > 0) {
+                        cells[getRandomInt(1, cells.length) - 1].deleteFigure();
+                        currentPlayer._isFirstTurn = false;
+                        swapPlayers();
+                        setBotTurn(!botTurn);
                     }
                 }, (1000));
             } else {
                 setTimeout(function() {
-                    let flag = false;
-                    let cell = null;
+                    let cells = [];
                     for (let i = 0; i < board._size; ++i) {
                         for (let j = 0; j < board._size; ++j) {
                             if (board.getCell(j, i)._available === true) {
-                                cell = board.getCell(j, i);
-                                flag = true;
-                                break;
+                                cells.push(board.getCell(j, i));
                             }
                         }
-                        if (flag) {
-                            break;
-                        }
                     }
-                    flag = false;
+                    let cell = cells[getRandomInt(1, cells.length) - 1];
+                    cells = [];
                     for (let i = 0; i < board._size; ++i) {
                         for (let j = 0; j < board._size; ++j) {
                             if (cell?._figure?.canMove(board.getCell(j, i))) {
-                                swapPlayers();
-                                cell.moveFigure(board.getCell(j, i));
-                                flag = true;
-                                break;
+                                cells.push(board.getCell(j, i));
                             }
                         }
-                        if (flag) {
-                            break;
-                        }
                     }
+                    swapPlayers();
+                    cell.moveFigure(cells[getRandomInt(1, cells.length) - 1]);
                     setBotTurn(!botTurn);
                 }, (1000));
             }

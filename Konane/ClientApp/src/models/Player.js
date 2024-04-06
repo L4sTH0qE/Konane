@@ -1,5 +1,4 @@
 export class Player {
-
     constructor(color) {
         this._color = color;
         this._isFirstTurn = true;

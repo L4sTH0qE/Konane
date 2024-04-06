@@ -1,5 +1,4 @@
-export class Cell
-{
+export class Cell {
     constructor(board, x, y, color, figure)
     {
         this._color = color;
@@ -79,7 +78,6 @@ export class Cell
 
     moveFigure(target) {
         if(this._figure && this._figure?.canMove(target)) {
-            this._figure.moveFigure(target);
             target.setFigure(this._figure);
             this._figure = null;
             let min = Math.min(this._x, target._x);

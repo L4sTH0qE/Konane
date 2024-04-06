@@ -1,6 +1,5 @@
 import {Colors} from "./Colors"
-export class Figure
-{
+export class Figure {
     constructor(color, cell)
     {
         this._logo = false;
@@ -23,9 +22,5 @@ export class Figure
             return true;
         }
         return false;
-    }
-
-    moveFigure(target) {
-        this._isFirstStep = false;
     }
 }
