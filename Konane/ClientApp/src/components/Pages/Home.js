@@ -24,7 +24,7 @@ export default function Home (props) {
         }
     }
 
-    useInterval(() => updateWins(), 5000)
+    useInterval(() => updateWins(), 3000)
 
     return (
         <>

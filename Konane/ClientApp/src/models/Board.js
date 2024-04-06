@@ -125,7 +125,6 @@ export class Board
             return false;
         } catch (error) {
             console.error("Error occured while highlighting");
-            console.log(this);
             return false;
         }
     }

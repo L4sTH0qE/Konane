@@ -1,12 +1,11 @@
-.chs-btn-left{
-    display: inline-block;
-    margin-left: 30px;
+.chs-btn {
     bottom: 15px;
     width: 160px;
+    height: 35px;
 }
 
 .chs-btn-center{
-    display: inline-block;
+
     margin-left: 30px;
     margin-right: 30px;
     bottom: 15px;
@@ -14,7 +13,7 @@
 }
 
 .chs-btn-right{
-    display: inline-block;
+
     margin-right: 30px;
     bottom: 15px;
     width: 160px;

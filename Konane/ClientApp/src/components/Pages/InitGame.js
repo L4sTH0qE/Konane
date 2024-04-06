@@ -1,4 +1,4 @@
-import { Button, Stack, TextField } from "@mui/material";
+import {Box, Button, Stack, TextField} from "@mui/material";
 import React, { useState } from "react";
 import CustomDialog from "../CustomDialog";
 import {Navigate} from "react-router-dom";
@@ -80,27 +80,31 @@ export default function InitGame(props) {
             {createRoom === false ? null : <div className="myModal">
                 <div className="myModalOptions">
                     <h3>Game settings</h3>
-                    <h3>Board size: {size}x{size} {'\u00A0'} Opponent: {bot === true ? <img src={logo_bot} alt="Bot"/> : <img src={logo_player} alt="Player"/>}</h3>
+                    <h3>Board size: {size}{'\u00D7'}{size} {'\u00A0'} Opponent: {bot === true ? <img src={logo_bot} alt="Bot"/> : <img src={logo_player} alt="Player"/>}</h3>
                     <div className="custom">
-                        <button className="btn btn-primary chs-btn-left" onClick={() => {
-                            setSize(6);
-                        }}>6x6</button>
-                        <button className="btn btn-primary chs-btn-center" onClick={() => {
-                            setSize(8);
-                        }}>8x8</button>
-                        <button className="btn btn-primary chs-btn-right" onClick={() => {
-                            setSize(10);
-                        }}>10x10</button><br/><br/>
-                        <button className="btn btn-primary chs-btn-left" onClick={() => {
-                            setBot(true);
-                        }}>Player vs Bot</button>
-                        <button className="btn btn-primary chs-btn-center" onClick={() => {
-                            setStart(true);
-                            setData({roomId: bot ? "private" : roomId, size: size, bot: bot, isFirst: isFirst});
-                        }}>START A GAME</button>
-                        <button className="btn btn-primary chs-btn-right" onClick={() => {
-                            setBot(false);
-                        }}>Player vs Player</button><br/><br/>
+                        <Box textAlign='center' display='flex' justifyContent='space-between'>
+                            <Button variant="contained" className="chs-btn" onClick={() => {
+                                setSize(6);
+                            }}>6{'\u00D7'}6</Button>
+                            <Button variant="contained" className="chs-btn" onClick={() => {
+                                setSize(8);
+                            }}>8{'\u00D7'}8</Button>
+                            <Button variant="contained" className="chs-btn" onClick={() => {
+                                setSize(10);
+                            }}>10{'\u00D7'}10</Button>
+                        </Box><br/>
+                        <Box textAlign='center' display='flex' justifyContent='space-between'>
+                            <Button variant="contained" className="chs-btn" onClick={() => {
+                                setBot(true);
+                            }}>Player vs Bot</Button>
+                            <Button variant="outlined" className="chs-btn" onClick={() => {
+                                setStart(true);
+                                setData({roomId: bot ? "private" : roomId, size: size, bot: bot, isFirst: isFirst});
+                            }}>START A GAME</Button>
+                            <Button variant="contained" className="chs-btn" onClick={() => {
+                                setBot(false);
+                            }}>Player vs Player</Button>
+                        </Box>
                         {start === true ? <Navigate to='/game-room' state={data} replace={true}/> : null}
                     </div>
                 </div>
@@ -114,7 +118,7 @@ export default function InitGame(props) {
                 Start a game
             </Button>
 
-            <Button onClick={() => {setRoomDialogOpen(true);}}>
+            <Button variant="text" onClick={() => {setRoomDialogOpen(true);}}>
                 Join a game
             </Button>
         </Stack>

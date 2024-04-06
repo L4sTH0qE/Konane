@@ -5,7 +5,6 @@ import Game from "../Game/Game";
 
 const GameOptions = (props) => {
     const location = useLocation();
-    console.log(location.state);
 
     return (
         <>

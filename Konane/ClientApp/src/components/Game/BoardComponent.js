@@ -1,43 +1,130 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import CellComponent from "./CellComponent";
 
-const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, firstPlayer, secondPlayer, postBoard, highlight}) => {
+const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, firstPlayer, secondPlayer, isBot, postBoard, highlight}) => {
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellsToChoose, setCellsToChoose] = useState(0);
     const [endFlag, setEndFlag] = useState(true);
+    const [botTurn , setBotTurn] = useState(true);
 
     function click(cell) {
         console.log("click!");
-        if(currentPlayer._name === name && firstPlayer !== "" && secondPlayer !== "") {
-            if (currentPlayer._isFirstTurn === true) {
-                if (cell?._figure !== null && cell._figure?._color === currentPlayer?._color && cell._available === true) {
-                    cell.deleteFigure();
-                    currentPlayer._isFirstTurn = false;
+        if (!isBot) {
+            if(currentPlayer._name === name && firstPlayer !== "" && secondPlayer !== "") {
+                if (currentPlayer._isFirstTurn === true) {
+                    if (cell?._figure !== null && cell._figure?._color === currentPlayer?._color && cell._available === true) {
+                        cell.deleteFigure();
+                        currentPlayer._isFirstTurn = false;
+                        swapPlayers();
+                        postBoard(true);
+                    }
+                }
+                if (selectedCell && selectedCell === cell) {
+                    setSelectedCell(null);
+                    setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose + 1 : cellsToChoose - 1);
+                    postBoard(false);
+                }
+                if (selectedCell && selectedCell !== cell && selectedCell?._figure?.canMove(cell)) {
                     swapPlayers();
+                    selectedCell.moveFigure(cell);
+                    setSelectedCell(null);
                     postBoard(true);
                 }
+                if (!selectedCell && cell?._figure !== null && cell._figure?._color === currentPlayer?._color) {
+                    setSelectedCell(cell);
+                    postBoard(false);
+                }
             }
-            if (selectedCell && selectedCell === cell) {
-                setSelectedCell(null);
-                setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose + 1 : cellsToChoose - 1);
-                postBoard(false);
-            }
-            if (selectedCell && selectedCell !== cell && selectedCell?._figure?.canMove(cell)) {
-                swapPlayers();
-                selectedCell.moveFigure(cell);
-                setSelectedCell(null);
-                postBoard(true);
-            }
-            if (!selectedCell && cell?._figure !== null && cell._figure?._color === currentPlayer?._color) {
-                setSelectedCell(cell);
-                postBoard(false);
+        } else {
+            if(currentPlayer._name === name) {
+                if (currentPlayer._isFirstTurn === true) {
+                    if (cell?._figure !== null && cell._figure?._color === currentPlayer?._color && cell._available === true) {
+                        cell.deleteFigure();
+                        currentPlayer._isFirstTurn = false;
+                        swapPlayers();
+                    }
+                }
+                if (selectedCell && selectedCell === cell) {
+                    setSelectedCell(null);
+                    setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose + 1 : cellsToChoose - 1);
+                }
+                if (selectedCell && selectedCell !== cell && selectedCell?._figure?.canMove(cell)) {
+                    selectedCell.moveFigure(cell);
+                    setSelectedCell(null);
+                    swapPlayers();
+                }
+                if (!selectedCell && cell?._figure !== null && cell._figure?._color === currentPlayer?._color) {
+                    setSelectedCell(cell);
+                }
             }
         }
     }
 
+    function botMakeTurn() {
+        if (currentPlayer._isBot === true) {
+            setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose + 1 : cellsToChoose - 1);
+            if (currentPlayer._isFirstTurn === true) {
+                setTimeout(function() {
+                    for (let i = 0; i < board._size; ++i) {
+                        for (let j = 0; j < board._size; ++j) {
+                            if (board.getCell(j, i)._available === true) {
+                                board.getCell(j, i).deleteFigure();
+                                currentPlayer._isFirstTurn = false;
+                                swapPlayers();
+                                setBotTurn(!botTurn);
+                                return;
+                            }
+                        }
+                    }
+                }, (1000));
+            } else {
+                setTimeout(function() {
+                    let flag = false;
+                    let cell = null;
+                    for (let i = 0; i < board._size; ++i) {
+                        for (let j = 0; j < board._size; ++j) {
+                            if (board.getCell(j, i)._available === true) {
+                                cell = board.getCell(j, i);
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag) {
+                            break;
+                        }
+                    }
+                    flag = false;
+                    for (let i = 0; i < board._size; ++i) {
+                        for (let j = 0; j < board._size; ++j) {
+                            if (cell?._figure?.canMove(board.getCell(j, i))) {
+                                swapPlayers();
+                                cell.moveFigure(board.getCell(j, i));
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag) {
+                            break;
+                        }
+                    }
+                    setBotTurn(!botTurn);
+                }, (1000));
+            }
+        }
+    }
+
+    useEffect(() => {
+        botMakeTurn();
+    }, [currentPlayer]);
+
+    useEffect(() => {
+        highlightCellsToChoose();
+    }, [botTurn]);
+    
+
     function highlightCellsToChoose() {
         if (typeof board.highlightCellsToChoose === 'function') {
-            console.log("component-highlight");
+            console.log("highlight cells");
             let flag = board.highlightCellsToChoose(currentPlayer);
             if (flag && endFlag) {
                 if (typeof endGame === 'function') {
