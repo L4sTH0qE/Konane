@@ -44,5 +44,10 @@
 
 h3 {
     text-align:center;
-    margin-bottom: 100px;
+    margin-bottom: 60px;
+}
+
+.gameMode {
+    width: 80px;
+    height: 80px;
 }

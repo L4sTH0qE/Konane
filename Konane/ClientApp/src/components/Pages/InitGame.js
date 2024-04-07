@@ -2,8 +2,8 @@ import {Box, Button, Stack, TextField} from "@mui/material";
 import React, { useState } from "react";
 import CustomDialog from "../CustomDialog";
 import {Navigate} from "react-router-dom";
-import logo_bot from "../../assets/gamemode_pve.png";
-import logo_player from "../../assets/gamemode_pvp.png";
+import logo_bot from "../../assets/bot.png";
+import logo_player from "../../assets/player.png";
 const { v4: uuidV4 } = require('uuid');
 
 export default function InitGame(props) {
@@ -80,7 +80,8 @@ export default function InitGame(props) {
             {createRoom === false ? null : <div className="myModal">
                 <div className="myModalOptions">
                     <h3>Game settings</h3>
-                    <h3>Board size: {size}{'\u00D7'}{size} {'\u00A0'} Opponent: {bot === true ? <img src={logo_bot} alt="Bot"/> : <img src={logo_player} alt="Player"/>}</h3>
+                    <h3>Board size: {size}{'\u00D7'}{size}</h3>
+                    <h3>Opponent: {bot === true ? <img className="gameMode" src={logo_bot} alt="Bot"/> : <img className="gameMode" src={logo_player} alt="Player"/>}</h3>
                     <div className="custom">
                         <Box textAlign='center' display='flex' justifyContent='space-between'>
                             <Button variant="contained" className="chs-btn" onClick={() => {
