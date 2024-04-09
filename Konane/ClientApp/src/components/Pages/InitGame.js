@@ -27,7 +27,6 @@ export default function InitGame(props) {
 
     async function checkRoomInput(roomInput) {
         const json = await getRoom(roomInput);  // command waits until completion
-        console.log(json);
         if (json === "No room with such ID") {
             setRoomError("No room with such ID");
         } else if (json.status === "Finished") {
@@ -45,7 +44,7 @@ export default function InitGame(props) {
         <Stack
             justifyContent="center"
             alignItems="center"
-            sx={{ py: 1, height: "100vh" }}
+            sx={{ py: 1, height: "90vh" }}
         >
             <CustomDialog
                 open={roomDialogOpen}
