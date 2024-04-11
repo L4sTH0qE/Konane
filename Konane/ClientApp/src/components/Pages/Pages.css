@@ -5,18 +5,16 @@
 }
 
 .chs-btn-center{
-
-    margin-left: 30px;
-    margin-right: 30px;
     bottom: 15px;
     width: 160px;
+    height: 35px;
 }
 
 .chs-btn-right{
-
-    margin-right: 30px;
+    margin-right: 130px;
     bottom: 15px;
     width: 160px;
+    height: 35px;
 }
 
 
@@ -44,7 +42,7 @@
 
 h3 {
     text-align:center;
-    margin-bottom: 60px;
+    margin-bottom: 50px;
 }
 
 .gameMode {
@@ -61,8 +59,14 @@ h3 {
 }
 
 body {
-    background-color: #272727;
+    background-color: #191919;
     font-family: 'Pacifico', cursive;
 }
 
+p {
+    font-size: 1.1em;
+}
 
+li {
+    font-size: 1.1em;
+}

@@ -80,8 +80,7 @@ export default function InitGame(props) {
                 <div className="myModalOptions">
                     <h3>Game settings</h3>
                     <h3>Board size: {size}{'\u00D7'}{size}</h3>
-                    <h3>Opponent: {bot === true ? <img className="gameMode" src={logo_bot} alt="Bot"/> : <img className="gameMode" src={logo_player} alt="Player"/>}</h3>
-                    <div className="custom">
+                    <div>
                         <Box textAlign='center' display='flex' justifyContent='space-between'>
                             <Button variant="contained" className="chs-btn" onClick={() => {
                                 setSize(6);
@@ -92,23 +91,35 @@ export default function InitGame(props) {
                             <Button variant="contained" className="chs-btn" onClick={() => {
                                 setSize(10);
                             }}>10{'\u00D7'}10</Button>
-                        </Box><br/>
-                        <Box textAlign='center' display='flex' justifyContent='space-between'>
+                        </Box>
+                    </div>
+                    <br/>
+                    <h3>Opponent: {bot === true ? <img className="gameMode" src={logo_bot} alt="Bot"/> : <img className="gameMode" src={logo_player} alt="Player"/>}</h3>
+                    <div>
+                        <Box textAlign='center' display='flex' justifyContent='space-around'>
                             <Button variant="contained" className="chs-btn" onClick={() => {
                                 setBot(true);
                             }}>Player vs Bot</Button>
-                            <Button variant="outlined" className="chs-btn" onClick={() => {
-                                setStart(true);
-                                setData({roomId: bot ? "private" : roomId, size: size, bot: bot, isFirst: isFirst});
-                            }}>START A GAME</Button>
                             <Button variant="contained" className="chs-btn" onClick={() => {
                                 setBot(false);
                             }}>Player vs Player</Button>
                         </Box>
+                    </div>
+                    <br/>
+                    <br/>
+                    <h3></h3>
+                    <div>
+                        <Box textAlign='center' display='flex' justifyContent='center'>
+                            <Button variant="outlined" className="chs-btn" onClick={() => {
+                                setStart(true);
+                                setData({roomId: bot ? "private" : roomId, size: size, bot: bot, isFirst: isFirst});
+                            }}>START A GAME</Button>
+                        </Box>
                         {start === true ? <Navigate to='/game-room' state={data} replace={true}/> : null}
                     </div>
                 </div>
-            </div> }
+            </div>
+            }
 
             <Button variant="contained" onClick={() => {
                 setRoomId(uuidV4());

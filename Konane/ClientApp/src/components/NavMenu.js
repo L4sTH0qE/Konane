@@ -23,19 +23,19 @@ export class NavMenu extends Component {
     return (
         <>
           <header>
-            <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-black border-bottom box-shadow mb-3 texti" container light sx={{color: '#ffffff'}}>
-              <NavbarBrand tag={Link} to="/">{<img className="brand" src={brand} alt=""/>} Konane</NavbarBrand>
+            <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-black border-bottom box-shadow mb-3" container light>
+              <NavbarBrand tag={Link} className="text-light" to="/">{<img className="brand" src={brand} alt=""/>} Konane</NavbarBrand>
               <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
               <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
-                <ul className="navbar-nav flex-grow">
+                <ul className="navbar-nav flex-grow white-text">
                   <NavItem>
-                    <NavLink tag={Link} className="text-dark" to='/'>Home</NavLink>
+                    <NavLink tag={Link} className="text-light" to='/'>Home</NavLink>
                   </NavItem>
                   <NavItem>
-                    <NavLink tag={Link} className="text-dark" to="/rules">Rules</NavLink>
+                    <NavLink tag={Link} className="text-light" to="/rules">Rules</NavLink>
                   </NavItem>
                   <NavItem>
-                    <NavLink tag={Link} className="text" to="/game-options">Play</NavLink>
+                    <NavLink tag={Link} className="text-light" to="/game-options">Play</NavLink>
                   </NavItem>
                 </ul>
               </Collapse>
