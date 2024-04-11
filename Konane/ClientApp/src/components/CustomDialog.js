@@ -4,6 +4,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import "../custom.css";
 
 const CustomDialog = ({ open, children, title, contentText, handleContinue }) => {
     return (
@@ -16,7 +17,7 @@ const CustomDialog = ({ open, children, title, contentText, handleContinue }) =>
                 {children}
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleContinue}>Continue</Button>
+                <Button sx = {{color: '#202020', "&:hover": {color: '#191919'}}} onClick={handleContinue}>Continue</Button>
             </DialogActions>
         </Dialog>
     );

@@ -16,3 +16,12 @@ html {
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
+
+.brand {
+  width: 40px;
+  height: 40px;
+}
+
+.texti {
+  color: tan;
+}

@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Konane
 {
     public class Program
@@ -12,6 +14,14 @@ namespace Konane
             builder.Services.AddControllersWithViews();
             builder.Services.AddMvc();
             builder.Services.AddSignalR();
+            
+            builder.Services.AddDbContext<ApplicationContext>(options =>
+            {
+                options.UseNpgsql(builder.Configuration.GetConnectionString(nameof(ApplicationContext)) ?? string.Empty);
+            });
+            builder.Services.AddScoped<UsersRepository>();
+            builder.Services.AddScoped<RoomsRepository>();
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

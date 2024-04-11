@@ -14,6 +14,7 @@
     height: calc(64px * 6);
     display: flex;
     flex-wrap: wrap;
+    box-shadow: 0 0 10px #444;
 }
 
 .board8 {
@@ -21,6 +22,7 @@
     height: calc(64px * 8);
     display: flex;
     flex-wrap: wrap;
+    box-shadow: 0 0 10px #444;
 }
 
 .board10 {
@@ -28,6 +30,7 @@
     height: calc(64px * 10);
     display: flex;
     flex-wrap: wrap;
+    box-shadow: 0 0 10px #444;
 }
 
 .cell {

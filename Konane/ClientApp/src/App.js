@@ -10,6 +10,7 @@ import InitGame from "./components/Pages/InitGame";
 import GameOptions from "./components/Pages/GameOptions";
 import logo_bot from "./assets/bot.png";
 import logo_player from "./assets/player.png";
+import konane_board from "./assets/Konane_board.jpg";
 
 export default function App(props) {
     const [username, setUsername] = useState("");
@@ -85,12 +86,22 @@ export default function App(props) {
                 </Routes>
             </Layout>
             { usernameSubmitted ? <></> :
+                <>
+                <h1 className="white-text">Take your Konane Experience to the next level</h1>
+                <p><b>Konane</b> also known as <b>Hawaiian Checkers</b> is a two-player ancient board game of strategy from Hawaii. The game can be played on 6x6, 8x8 or 10x10 board. One player plays with WHITE pieces and another with BLACK pieces. The game starts with the board filled with both player's pieces with each player occupying half slots in an alternating pattern. BLACK starts first. Players alternate turn to play and capture at least one opponent piece.</p>
+                <p>In the first turn black player can remove a black piece from one of the four central squares.</p>
+                <p>The white player in his/her first turn can remove a white piece adjacent to the space left by the black player.</p>
+                <p>In subsequent turns players simply capture adjacent opponent pieces by jumping over it to the vacant spot immediately after the opponent piece horizontally or vertically. Player can continue to capture opponent pieces in the same direction if possible in the same turn (optionally). Player can not change direction of movement in the same turn.</p>
+                <p>The game ends when a player can not make any capture in his/her turn and that player loses the game.</p>
+                
+                
                 <Stack
                     justifyContent="center"
                     alignItems="center"
                     sx={{ py: 1, height: "90vh" }}
                 >
                     <CustomDialog
+                        sx={{ backgroundColor: '#202020' }}
                         open={logIn} // leave open if username has not been selected
                         title="Enter a username" // Title of dialog
                         contentText="I have account" // content text of dialog
@@ -118,6 +129,7 @@ export default function App(props) {
                         />
                     </CustomDialog>
                     <CustomDialog
+                        sx={{ backgroundColor: '#202020' }}
                         open={signUp} // leave open if username has not been selected
                         title="Enter a username" // Title of dialog
                         contentText="Not a member" // content text of dialog
@@ -145,13 +157,14 @@ export default function App(props) {
                         />
                     </CustomDialog>
 
-                    <Button variant="contained" onClick={() => { setLogIn(true); }}>
+                    <Button sx = {{backgroundColor: '#202020', color: '#cda88b', "&:hover": {color: '#b28c6e', backgroundColor: '#191919'},  border: 2, borderColor: '#000000'}} variant="contained" onClick={() => { setLogIn(true); }}>
                         Log in
                     </Button>
-                    <Button variant="text" onClick={() => { setSignUp(true); }}>
+                    <Button sx = {{color: '#cda88b', "&:hover": {color: '#b28c6e', backgroundColor: '#191919'}}} variant="text" onClick={() => { setSignUp(true); }}>
                         Sign up
                     </Button>
                 </Stack>
+                </>
             }
         </>
     );

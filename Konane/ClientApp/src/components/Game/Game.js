@@ -25,7 +25,7 @@ export default function  Game (props) {
     const [active, setActive] = useState(false);
     const [update, setUpdate] = useState(false);
     const [highlight, setHighlight] = useState(false);
-    const [winnerFlag, setWinnerFlag] = useState(false);
+    let winnerFlag = false;
 
     useMemo(() => {
         if (!props.isBot) {
@@ -258,12 +258,12 @@ export default function  Game (props) {
         console.log("GameOver");
         if (!props.isBot) {
             if (!winnerFlag) {
-                setWinnerFlag(true);
+                winnerFlag = true;
                 let name = currentPlayer === blackPlayer ? whitePlayer._name : blackPlayer._name;
                 const response = await fetch('/user/' + name);
                 const user = await response.json();
                 let wins = user.wins + 1;
-                fetch('/user', {
+                await fetch('/user', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -323,6 +323,7 @@ export default function  Game (props) {
                                         <Typography variant="h5">Room ID: {props.roomId}</Typography>
                                     </CardContent>
                                 </Card>
+                                <h3 className="player-turn">Status: {whitePlayer._name === "" ? "Waiting for a second player..." : "Active"}</h3>
                                 <h3 className="player-turn">Players: {blackPlayer._name}{whitePlayer._name === "" ? "" : ","} {whitePlayer._name} {'\u00A0'} Current turn: {currentPlayer._name} {'\u00A0'} {currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
                                 <div className="game">
                                     <BoardComponent

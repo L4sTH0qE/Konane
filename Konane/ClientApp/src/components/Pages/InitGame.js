@@ -115,11 +115,11 @@ export default function InitGame(props) {
                 setIsFirst(true);
                 setCreateRoom(true);
             }}>
-                Start a game
+                Create room
             </Button>
 
             <Button variant="text" onClick={() => {setRoomDialogOpen(true);}}>
-                Join a game
+                Join room
             </Button>
         </Stack>
     );

@@ -1,4 +1,5 @@
 import React from 'react';
+import konane_board from "../../assets/Konane_board.jpg";
 
 export default function Rules () {
     return (
@@ -9,6 +10,9 @@ export default function Rules () {
             <p>The white player in his/her first turn can remove a white piece adjacent to the space left by the black player.</p>
             <p>In subsequent turns players simply capture adjacent opponent pieces by jumping over it to the vacant spot immediately after the opponent piece horizontally or vertically. Player can continue to capture opponent pieces in the same direction if possible in the same turn (optionally). Player can not change direction of movement in the same turn.</p>
             <p>The game ends when a player can not make any capture in his/her turn and that player loses the game.</p>
+            <img className="rules-image" src={konane_board} alt="Konane"/>
+            
+            
         </div>
     );
 }

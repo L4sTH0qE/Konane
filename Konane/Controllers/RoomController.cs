@@ -9,27 +9,28 @@ namespace Konane.Controllers
     public class RoomController : ControllerBase
     {
         private readonly ILogger<RoomController> _logger;
-        private static Dictionary<string, Room> _rooms = GetData();
+        private readonly RoomsRepository _rooms;
 
-        public RoomController(ILogger<RoomController> logger)
+        public RoomController(ILogger<RoomController> logger, RoomsRepository rooms)
         {
+            _rooms = rooms;
             _logger = logger;
         }
         
         [HttpGet]
         [Route("[controller]")]
-        public IEnumerable<Room> Get()
+        public IActionResult Get()
         {
             _logger.LogInformation("Get Rooms");
-            return _rooms.Values;
+            return Ok(_rooms.Get());
         }
 
         [HttpGet]
         [Route("[controller]/{roomId}")]
-        public Room? Get(string roomId)
+        public IActionResult Get(string roomId)
         {
             _logger.LogInformation("Get Room");
-            return !_rooms.TryGetValue(roomId, out Room? room) ? null : _rooms[roomId];
+            return Ok(_rooms.Get().Find(x => x.RoomId == roomId));
         }
 
         [HttpPost]
@@ -38,25 +39,28 @@ namespace Konane.Controllers
         {
             if (room.RoomId == null)
             {
-                return Ok(room.RoomId);
+                return StatusCode(StatusCodes.Status201Created, room);
             }
-            _rooms.TryGetValue(room.RoomId, out Room? testRoom);
-            _logger.LogInformation("Post Room");
-            if (testRoom == null)
+
+            int index = _rooms.Get().FindIndex(x => x.RoomId == room.RoomId);
+            Room? tmp = _rooms.Get().Find(x => x.RoomId == room.RoomId);
+            if (index == -1)
             {
+                room.Id = Guid.NewGuid();
                 room.Status = "Waiting";
                 room.FirstFirstTurn = true;
                 room.SecondFirstTurn = true;
-                _rooms[room.RoomId] = room;
-            } else if (_rooms[room.RoomId].Status == "Waiting" && room.SecondPlayer != "") {
+                _rooms.Create(room);
+            } else if (tmp?.Status == "Waiting" && room.SecondPlayer != "") {
                 room.Status = "Active";
                 room.FirstFirstTurn = true;
                 room.SecondFirstTurn = true;
-                _rooms[room.RoomId] = room;
-            } else if (_rooms[room.RoomId].Status == "Active") {
+                _rooms.Update(room.RoomId, room.FirstPlayer, room.SecondPlayer, room.CurrentPlayer, room.Board, 
+                    room.FirstTurnFinished, room.SecondTurnFinished, room.FirstFirstTurn, room.SecondFirstTurn);
+            } else if (tmp?.Status == "Active") {
                 room.Status = "Active";
-                bool firstTurn = _rooms[room.RoomId].FirstFirstTurn;
-                bool secondTurn = _rooms[room.RoomId].SecondFirstTurn;
+                bool firstTurn = tmp.FirstFirstTurn;
+                bool secondTurn = tmp.SecondFirstTurn;
                 if (room.CurrentPlayer == room.FirstPlayer && room.SecondTurnFinished)
                 {
                     secondTurn = false;
@@ -71,61 +75,11 @@ namespace Konane.Controllers
                 {
                     room.Status = "Finished";
                 }
-                _rooms[room.RoomId] = room;
+                _rooms.Update(room.RoomId, room.FirstPlayer, room.SecondPlayer, room.CurrentPlayer, room.Board, 
+                    room.FirstTurnFinished, room.SecondTurnFinished, room.FirstFirstTurn, room.SecondFirstTurn);
             }
-            SaveData();
-            return Ok(room.RoomId);
-        }
-        
-        private static Dictionary<string, Room> GetData()
-        {
-            try
-            {
-                using (StreamReader reader = new StreamReader("Data/rooms.json")) {
-                    string? json = reader.ReadLine();
-                    if (json == null)
-                    {
-                        return new Dictionary<string, Room>();
-                    }
-                    
-                    List<Konane.Room>? data = JsonSerializer.Deserialize<List<Room>>(json);
-                    if (data == null)
-                    {
-                        return new Dictionary<string, Room>();
-                    }
-
-                    Dictionary<string, Room> rooms = new Dictionary<string, Room>();
-                    foreach (Room room in data)
-                    {
-                        string? id = room.RoomId;
-                        if (id != null)
-                        {
-                            rooms[id] = room;
-                        }
-                    }
-                    return rooms;
-                }
-            }
-            catch (NullReferenceException)
-            {
-                return new Dictionary<string, Room>();
-            }
-        }
-        
-        private static void SaveData()
-        {
-            try
-            {
-                string json = JsonSerializer.Serialize(_rooms.Values);
-                using (StreamWriter writer = new StreamWriter("Data/rooms.json", false))
-                {
-                    writer.WriteLine(json);
-                }
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Error: cannot save room data into file!");
-            }
+            _logger.LogInformation("Post Room");
+            return StatusCode(StatusCodes.Status201Created, room);
         }
     }
 }

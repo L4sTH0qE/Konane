@@ -1,6 +1,6 @@
 namespace Konane
 {
-    public class Room
+    public class RoomEntity
     {
         public Guid Id { get; set; }
         
