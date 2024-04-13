@@ -175,7 +175,7 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
     }, []);
 
     return (
-        <div>
+        <div className="boardBackground">
             <div className={board._size === 6 ? "board6" : board._size === 8 ? "board8" : "board10"}>
                 {board._cells?.map((row, index) =>
                     <React.Fragment key={index}>

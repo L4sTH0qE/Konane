@@ -47,7 +47,7 @@ public class RoomsRepository
     }
     
     public void Update(string? roomId, string? firstPlayer, string? secondPlayer, string? currentPlayer, string? board, 
-        bool firstTurnFinished, bool secondTurnFinished, bool firstFirstTurn, bool secondFirstTurn) {
+        bool firstTurnFinished, bool secondTurnFinished, bool firstFirstTurn, bool secondFirstTurn, string? status) {
         _context.Rooms
             .Where(r => r.RoomId == roomId)
             .ExecuteUpdate(r => r
@@ -58,7 +58,8 @@ public class RoomsRepository
                 .SetProperty(e => e.FirstTurnFinished, e => firstTurnFinished)
                 .SetProperty(e => e.SecondTurnFinished, e => secondTurnFinished)
                 .SetProperty(e => e.FirstFirstTurn, e => firstFirstTurn)
-                .SetProperty(e => e.SecondFirstTurn, e => secondFirstTurn));
+                .SetProperty(e => e.SecondFirstTurn, e => secondFirstTurn)
+                .SetProperty(e => e.Status, e => status));
     }
  
     public void Delete(string? roomId)

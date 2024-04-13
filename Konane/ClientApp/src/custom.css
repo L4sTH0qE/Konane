@@ -10,6 +10,19 @@
   color: #909090;
 }
 
+body {
+  background-color: #191919;
+  font-family: 'Pacifico', cursive;
+}
+
+p {
+  font-size: 1.1em;
+}
+
+li {
+  font-size: 1.1em;
+}
+
 .start-text {
   margin-top: 100px;
   margin-left: 50px;
@@ -21,6 +34,7 @@
   width: 852px;
   height: 640px;
   float: right;
+  filter: brightness(80%);
 }
 
 .start-content {

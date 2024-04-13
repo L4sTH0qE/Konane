@@ -56,7 +56,7 @@ namespace Konane.Controllers
                 room.FirstFirstTurn = true;
                 room.SecondFirstTurn = true;
                 _rooms.Update(room.RoomId, room.FirstPlayer, room.SecondPlayer, room.CurrentPlayer, room.Board, 
-                    room.FirstTurnFinished, room.SecondTurnFinished, room.FirstFirstTurn, room.SecondFirstTurn);
+                    room.FirstTurnFinished, room.SecondTurnFinished, room.FirstFirstTurn, room.SecondFirstTurn, room.Status);
             } else if (tmp?.Status == "Active") {
                 room.Status = "Active";
                 bool firstTurn = tmp.FirstFirstTurn;
@@ -76,7 +76,7 @@ namespace Konane.Controllers
                     room.Status = "Finished";
                 }
                 _rooms.Update(room.RoomId, room.FirstPlayer, room.SecondPlayer, room.CurrentPlayer, room.Board, 
-                    room.FirstTurnFinished, room.SecondTurnFinished, room.FirstFirstTurn, room.SecondFirstTurn);
+                    room.FirstTurnFinished, room.SecondTurnFinished, room.FirstFirstTurn, room.SecondFirstTurn, room.Status);
             }
             _logger.LogInformation("Post Room");
             return StatusCode(StatusCodes.Status201Created, room);

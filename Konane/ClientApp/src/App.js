@@ -1,15 +1,14 @@
 import React, {useEffect, useState, } from 'react';
-import {Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
-import {Box, Button, Stack, TextField} from "@mui/material";
+import {Route, Routes, useLocation, useNavigate} from 'react-router-dom';
+import {Button, Stack} from "@mui/material";
 import './custom.css';
 import { Layout } from './components/Layout';
 import CustomDialog from "./components/CustomDialog";
+import CustomTextField from "./components/CustomTextField";
 import Home from "./components/Pages/Home";
 import Rules from "./components/Pages/Rules";
 import InitGame from "./components/Pages/InitGame";
 import GameOptions from "./components/Pages/GameOptions";
-import logo_bot from "./assets/bot.png";
-import logo_player from "./assets/player.png";
 import konane_game from "./assets/Konane_game.png";
 
 export default function App(props) {
@@ -77,6 +76,7 @@ export default function App(props) {
 
     return (
         <>
+            {location.pathname === "/game-options"  && usernameSubmitted ? <div className="bg"></div> : <></>}
             <Layout>
                 <Routes>
                     <Route key={true} path='/' element={usernameSubmitted ? <Home username={username} wins={wins}/> : <> </>} />;
@@ -90,14 +90,13 @@ export default function App(props) {
                     <div className="start-text">
                         <h1 className="white-text">TAKE YOUR KONANE EXPERIENCE TO </h1>
                         <h1 className="white-text">THE NEXT LEVEL</h1>
-                        <p className="gray-text">Play with konane players from around the world to test your skills or practive in special 'Player vs Bot' mode.</p>
+                        <p className="gray-text">Play with konane players from around the world to test your skills or practice in special 'Player vs Bot' mode.</p>
                         <Stack
                             marginTop={20}
                             alignItems="center"
                             sx={{ py: 1, height: "300px" }}
                         >
                             <CustomDialog
-                                sx={{ backgroundColor: '#202020' }}
                                 open={logIn} // leave open if username has not been selected
                                 title="Enter a username" // Title of dialog
                                 contentText="I have account" // content text of dialog
@@ -106,7 +105,7 @@ export default function App(props) {
                                     checkLogInInput(username);
                                 }}
                             >
-                                <TextField // Input
+                                <CustomTextField // Input
                                     autoFocus // automatically set focus on input (make it active).
                                     margin="dense"
                                     id="username"
@@ -125,7 +124,6 @@ export default function App(props) {
                                 />
                             </CustomDialog>
                             <CustomDialog
-                                sx={{ backgroundColor: '#202020' }}
                                 open={signUp} // leave open if username has not been selected
                                 title="Enter a username" // Title of dialog
                                 contentText="Not a member" // content text of dialog
@@ -134,7 +132,7 @@ export default function App(props) {
                                     checkSignUpInput(username);
                                 }}
                             >
-                                <TextField // Input
+                                <CustomTextField // Input
                                     autoFocus // automatically set focus on input (make it active).
                                     margin="dense"
                                     id="username"

@@ -38,6 +38,29 @@ export default function Home (props) {
                     <li><strong className="light-text">Play</strong>. The page with options of creating a room for playing with the specified settings and joining an already existing room by its 'Room ID'.</li>
                 </ul>
             </div>
+            <div className="game-info">
+                <h1 className="white-text game-table-title">Game information</h1>
+                <table className='game-table'>
+                    <thead>
+                    <tr>
+                        <th>Age rating</th>
+                        <th>Players</th>
+                        <th>Genres</th>
+                        <th>Game duration</th>
+                        <th>Release date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>0+</td>
+                        <td>2</td>
+                        <td>Abstract strategy game</td>
+                        <td>{'\u2248'} 9 mins</td>
+                        <td>02.04.2024</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </>
     );
 }

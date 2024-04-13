@@ -9,6 +9,7 @@ import {Box, Button, Card, CardContent, Typography} from "@mui/material";
 import "./Game.css";
 import logo_white from "../../assets/checkers_top_white.png";
 import logo_black from "../../assets/checkers_top_black.png";
+import copy from "../../assets/copy.png";
 import useInterval from "../useInterval";
 
 const flatted = require('flatted');
@@ -164,6 +165,22 @@ export default function  Game (props) {
                         setWinner(currentPlayer === blackPlayer ? whitePlayer : blackPlayer);
                         setGameOver(true);
                         console.log("GameOver");
+                        if (!winnerFlag) {
+                            winnerFlag = true;
+                            let name = currentPlayer === blackPlayer ? whitePlayer._name : blackPlayer._name;
+                            if (name === props.name) {
+                                const response = await fetch('/user/' + name);
+                                const user = await response.json();
+                                let wins = user.wins + 1;
+                                await fetch('/user', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ name: name, wins: wins })
+                                });
+                            }
+                        }
                     }
                     const tmp = flatted.parse(room.board);
                     const newBoard = new Board(tmp._size);
@@ -256,22 +273,6 @@ export default function  Game (props) {
         finishBoard(currentPlayer);
         setGameOver(true);
         console.log("GameOver");
-        if (!props.isBot) {
-            if (!winnerFlag) {
-                winnerFlag = true;
-                let name = currentPlayer === blackPlayer ? whitePlayer._name : blackPlayer._name;
-                const response = await fetch('/user/' + name);
-                const user = await response.json();
-                let wins = user.wins + 1;
-                await fetch('/user', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name: name, wins: wins })
-                });
-            }
-        }
     }
 
     return (
@@ -280,24 +281,30 @@ export default function  Game (props) {
                 gameOver === true ?             <>
                         <div className="myModal" >
                             <div className="myModalContent">
-                                <h3>Game over!<br/> Winner is: {winner._color === Colors.WHITE ? whitePlayer._name : blackPlayer._name}</h3>
+                                <h3>Game over!<br/><br/> {winner._name === props.name ? "You win!" : "You lose!"}</h3>
                                 <div className="custom">
-                                    <Box textAlign='center' display='flex' justifyContent='space-between'>
-                                        <Button variant="contained" onClick={() => {
+                                    <Box textAlign='center' display='flex' justifyContent='center'>
+                                        <Button className="end-btn" sx = {{color: '#cda88b', backgroundColor: '#202020', "&:hover": {color: '#b28c6e', backgroundColor: '#191919'}}} variant="text" onClick={() => {
                                             setRedirect(true);
-                                        }}>Return to Home Page 
+                                        }}>Return to Home Page
                                         </Button>
                                     </Box>
                                 </div>
                             </div>
                         </div>
                         <>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h5">Room ID: {props.isBot ? "private" : props.roomId}</Typography>
+                            <Card className="room-id" sx = {{borderRadius: 5, boxShadow: '0 0 10px #b28c6e'}}>
+                                <CardContent sx = {{color: '#202020', backgroundColor: '#cda88b', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <Typography variant="h5">
+                                        Room ID: {props.roomId}
+                                    </Typography>
+                                    {props.isBot ? <></> : <Button className="copy-btn" sx = {{borderRadius: 5, border: '2px solid #191919', backgroundColor: '#cda88b', "&:hover": {color: '#202020', backgroundColor: '#b28c6e'}}} variant="text" onClick={() => {navigator.clipboard.writeText(props.roomId)}}>
+                                        <img src={copy} alt="copy" height="48px"/>
+                                    </Button>}
                                 </CardContent>
                             </Card>
-                            <h3 className="player-turn">Players: {blackPlayer._name}, {whitePlayer._name}. {'\u00A0'} Current turn: {currentPlayer._name} {'\u00A0'} {currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
+                            <h3 className="player-turn white-text">Status: Finished</h3>
+                            <h3 className="player-turn white-text">Players: {blackPlayer._name}{whitePlayer._name === "" ? "" : ","} {whitePlayer._name} {'\u00A0'} Current turn: {currentPlayer._name}{'\u00A0'}{currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
                             <div className="game">
                                 <BoardComponent
                                     board={board}
@@ -311,6 +318,7 @@ export default function  Game (props) {
                                     postBoard={postBoard}
                                     update={update}
                                     highlight={highlight}
+                                    isBot={props.isBot}
                                 />
                             </div>
                         </>
@@ -318,13 +326,18 @@ export default function  Game (props) {
                     <>
                         {  board === null ? null :
                             <>
-                                <Card>
-                                    <CardContent>
-                                        <Typography variant="h5">Room ID: {props.roomId}</Typography>
+                                <Card className="room-id" sx = {{borderRadius: 5, boxShadow: '0 0 10px #b28c6e'}}>
+                                    <CardContent sx = {{color: '#202020', backgroundColor: '#cda88b', display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                                        <Typography variant="h5">
+                                            Room ID: {props.roomId}
+                                        </Typography>
+                                        {props.isBot ? <></> : <Button className="copy-btn" sx = {{borderRadius: 5, border: '2px solid #191919', backgroundColor: '#cda88b', "&:hover": {color: '#202020', backgroundColor: '#b28c6e'}}} variant="text" onClick={() => {navigator.clipboard.writeText(props.roomId)}}>
+                                            <img src={copy} alt="copy" height="48px"/>
+                                        </Button>}
                                     </CardContent>
                                 </Card>
-                                <h3 className="player-turn">Status: {whitePlayer._name === "" ? "Waiting for a second player..." : "Active"}</h3>
-                                <h3 className="player-turn">Players: {blackPlayer._name}{whitePlayer._name === "" ? "" : ","} {whitePlayer._name} {'\u00A0'} Current turn: {currentPlayer._name} {'\u00A0'} {currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
+                                <h3 className="player-turn white-text">Status: {whitePlayer._name === "" ? "Waiting for a second player..." : "Active"}</h3>
+                                <h3 className="player-turn white-text">Players: {blackPlayer._name}{whitePlayer._name === "" ? "" : ","} {whitePlayer._name} {'\u00A0'} Current turn: {currentPlayer._name}{'\u00A0'}{currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
                                 <div className="game">
                                     <BoardComponent
                                         board={board}

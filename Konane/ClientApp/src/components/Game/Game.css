@@ -9,12 +9,19 @@
     align-items: center;
 }
 
+.boardBackground {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 20px #b28c6e;
+    margin-bottom: 50px;
+}
+
 .board6 {
     width: calc(64px * 6);
     height: calc(64px * 6);
     display: flex;
     flex-wrap: wrap;
-    box-shadow: 0 0 10px #444;
 }
 
 .board8 {
@@ -22,7 +29,6 @@
     height: calc(64px * 8);
     display: flex;
     flex-wrap: wrap;
-    box-shadow: 0 0 10px #444;
 }
 
 .board10 {
@@ -30,7 +36,6 @@
     height: calc(64px * 10);
     display: flex;
     flex-wrap: wrap;
-    box-shadow: 0 0 10px #444;
 }
 
 .cell {
@@ -79,7 +84,7 @@
 }
 
 .room-id {
-    white-space: nowrap;
+    box-shadow: 0 0 20px #000000;
 }
 
 .myModal {
@@ -99,10 +104,22 @@
     z-index: 2;
     position: absolute;
     padding: 25px;
-    background: white;
+    color: #191919;
+    background: #cda88b;
     border-radius: 16px;
     min-width: 250px;
     white-space: nowrap;
+}
+
+.copy-btn {
+    width: 32px;
+    height: 64px;
+    box-shadow: 0 0 10px #000000;
     justify-content: center;
     align-items: center;
+}
+
+.end-btn {
+    height: 45px;
+    box-shadow: 0 0 5px #000000;
 }

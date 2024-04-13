@@ -9,14 +9,14 @@ import "../custom.css";
 const CustomDialog = ({ open, children, title, contentText, handleContinue }) => {
     return (
         <Dialog open={open}>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogContent>
-                <DialogContentText>
+            <DialogTitle sx = {{backgroundColor: '#cda88b'}}>{title}</DialogTitle>
+            <DialogContent sx = {{backgroundColor: '#cda88b'}}>
+                <DialogContentText sx = {{color: '#191919'}}>
                     {contentText}
                 </DialogContentText>
                 {children}
             </DialogContent>
-            <DialogActions>
+            <DialogActions sx = {{backgroundColor: '#cda88b'}}>
                 <Button sx = {{color: '#202020', "&:hover": {color: '#191919'}}} onClick={handleContinue}>Continue</Button>
             </DialogActions>
         </Dialog>

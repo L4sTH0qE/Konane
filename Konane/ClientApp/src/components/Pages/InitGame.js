@@ -1,6 +1,7 @@
-import {Box, Button, Stack, TextField} from "@mui/material";
+import {Box, Button, Stack} from "@mui/material";
 import React, { useState } from "react";
 import CustomDialog from "../CustomDialog";
+import CustomTextField from "../CustomTextField";
 import {Navigate} from "react-router-dom";
 import logo_bot from "../../assets/bot.png";
 import logo_player from "../../assets/player.png";
@@ -17,6 +18,8 @@ export default function InitGame(props) {
     const [bot, setBot] = useState(false);
     const [isFirst, setIsFirst] = useState(true);
     const [data, setData] = useState({roomId: roomId, size: size, bot: bot, isFirst: isFirst});
+    const [selectedBtnFirst, setSelectedBtnFirst] = React.useState(2);
+    const [selectedBtnSecond, setSelectedBtnSecond] = React.useState(2);
 
     function getRoom(roomId) {
         return fetch('/room/' + roomId)
@@ -41,97 +44,105 @@ export default function InitGame(props) {
     }
 
     return (
-        <Stack
-            justifyContent="center"
-            alignItems="center"
-            sx={{ py: 1, height: "90vh" }}
-        >
-            <CustomDialog
-                open={roomDialogOpen}
-                handleClose={() => setRoomDialogOpen(false)}
-                title="Select Room to Join"
-                contentText="Enter a valid room ID to join the room"
-                handleContinue={() => {
-                    // join a room
-                    if (!roomInput) return; // if given room input is valid, do nothing.
-                    checkRoomInput(roomInput);
-                }}
+        <>
+            <Stack
+                justifyContent="center"
+                alignItems="center"
+                sx={{ py: 1, height: "90vh" }}
             >
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="room"
-                    label="Room ID"
-                    name="room"
-                    value={roomInput}
-                    required
-                    onChange={(e) => setRoomInput(e.target.value)}
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                    error={Boolean(roomError)}
-                    helperText={
-                        !roomError ? "Enter a room ID" : `Invalid room ID: ${roomError}`
-                    }
-                />
-            </CustomDialog>
-            {start === true ? <Navigate to='/game-room' state={data} replace={true}/> : null}
-            {createRoom === false ? null : <div className="myModal">
-                <div className="myModalOptions">
-                    <h3>Game settings</h3>
-                    <h3>Board size: {size}{'\u00D7'}{size}</h3>
-                    <div>
-                        <Box textAlign='center' display='flex' justifyContent='space-between'>
-                            <Button variant="contained" className="chs-btn" onClick={() => {
-                                setSize(6);
-                            }}>6{'\u00D7'}6</Button>
-                            <Button variant="contained" className="chs-btn" onClick={() => {
-                                setSize(8);
-                            }}>8{'\u00D7'}8</Button>
-                            <Button variant="contained" className="chs-btn" onClick={() => {
-                                setSize(10);
-                            }}>10{'\u00D7'}10</Button>
-                        </Box>
+                <CustomDialog
+                    open={roomDialogOpen}
+                    handleClose={() => setRoomDialogOpen(false)}
+                    title="Select Room to Join"
+                    contentText="Enter a valid room ID to join the room"
+                    handleContinue={() => {
+                        // join a room
+                        if (!roomInput) return; // if given room input is valid, do nothing.
+                        checkRoomInput(roomInput);
+                    }}
+                >
+                    <CustomTextField
+                        autoFocus
+                        margin="dense"
+                        id="room"
+                        label="Room ID"
+                        name="room"
+                        value={roomInput}
+                        required
+                        onChange={(e) => setRoomInput(e.target.value)}
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        error={Boolean(roomError)}
+                        helperText={
+                            !roomError ? "Enter a room ID" : `Invalid room ID: ${roomError}`
+                        }
+                    />
+                </CustomDialog>
+                {start === true ? <Navigate to='/game-room' state={data} replace={true}/> : null}
+                {createRoom === false ? null :
+                    <div className="myModal">
+                        <div className="myModalOptions">
+                            <h3>Game settings</h3>
+                            <h3>Board size: {size}{'\u00D7'}{size}</h3>
+                            <div>
+                                <Box textAlign='center' display='flex' justifyContent='space-around'>
+                                    <Button className="chs-btn" sx = {{color: '#cda88b', backgroundColor: selectedBtnFirst === 1 ? '#202020' : '#404040', "&:hover": {color: '#b28c6e', backgroundColor: selectedBtnFirst === 1 ? '#191919' : '#393939'}}} variant="text" onClick={() => {
+                                        setSelectedBtnFirst(1);
+                                        setSize(6);
+                                    }}>6{'\u00D7'}6</Button>
+                                    <Button className="chs-btn" sx = {{color: '#cda88b', backgroundColor: selectedBtnFirst === 2 ? '#202020' : '#404040', "&:hover": {color: '#b28c6e', backgroundColor: selectedBtnFirst === 2 ? '#191919' : '#393939'}}} variant="text" onClick={() => {
+                                        setSelectedBtnFirst(2);
+                                        setSize(8);
+                                    }}>8{'\u00D7'}8</Button>
+                                    <Button className="chs-btn" sx = {{color: '#cda88b', backgroundColor: selectedBtnFirst === 3 ? '#202020' : '#404040', "&:hover": {color: '#b28c6e', backgroundColor: selectedBtnFirst === 3 ? '#191919' : '#393939'}}} variant="text" onClick={() => {
+                                        setSelectedBtnFirst(3);
+                                        setSize(10);
+                                    }}>10{'\u00D7'}10</Button>
+                                </Box>
+                            </div>
+                            <br/>
+                            <h3>Opponent: {bot === true ? <img className="gameMode" src={logo_bot} alt="Bot"/> : <img className="gameMode" src={logo_player} alt="Player"/>}</h3>
+                            <div>
+                                <Box textAlign='center' display='flex' justifyContent='space-around'>
+                                    <Button className="chs-btn" sx = {{color: '#cda88b', backgroundColor: selectedBtnSecond === 1 ? '#202020' : '#404040', "&:hover": {color: '#b28c6e', backgroundColor: selectedBtnSecond === 1 ? '#191919' : '#393939'}}} variant="text" onClick={() => {
+                                        setSelectedBtnSecond(1);
+                                        setBot(true);
+                                    }}>Player vs Bot</Button>
+                                    <Button className="chs-btn" sx = {{color: '#cda88b', backgroundColor: selectedBtnSecond === 2 ? '#202020' : '#404040', "&:hover": {color: '#b28c6e', backgroundColor: selectedBtnSecond === 2 ? '#191919' : '#393939'}}} variant="text" onClick={() => {
+                                        setSelectedBtnSecond(2);
+                                        setBot(false);
+                                    }}>Player vs Player</Button>
+                                </Box>
+                            </div>
+                            <br/>
+                            <br/>
+                            <h3></h3>
+                            <div>
+                                <Box textAlign='center' display='flex' justifyContent='center'>
+                                    <Button className="sgn-btn" sx = {{color: '#cda88b', backgroundColor: '#202020', "&:hover": {color: '#b28c6e', backgroundColor: '#191919'}}} variant="text" onClick={() => {
+                                        setStart(true);
+                                        setData({roomId: bot ? "private" : roomId, size: size, bot: bot, isFirst: isFirst});
+                                    }}>START A GAME</Button>
+                                </Box>
+                                {start === true ? <Navigate to='/game-room' state={data} replace={true}/> : null}
+                            </div>
+                        </div>
                     </div>
-                    <br/>
-                    <h3>Opponent: {bot === true ? <img className="gameMode" src={logo_bot} alt="Bot"/> : <img className="gameMode" src={logo_player} alt="Player"/>}</h3>
-                    <div>
-                        <Box textAlign='center' display='flex' justifyContent='space-around'>
-                            <Button variant="contained" className="chs-btn" onClick={() => {
-                                setBot(true);
-                            }}>Player vs Bot</Button>
-                            <Button variant="contained" className="chs-btn" onClick={() => {
-                                setBot(false);
-                            }}>Player vs Player</Button>
-                        </Box>
-                    </div>
-                    <br/>
-                    <br/>
-                    <h3></h3>
-                    <div>
-                        <Box textAlign='center' display='flex' justifyContent='center'>
-                            <Button variant="outlined" className="chs-btn" onClick={() => {
-                                setStart(true);
-                                setData({roomId: bot ? "private" : roomId, size: size, bot: bot, isFirst: isFirst});
-                            }}>START A GAME</Button>
-                        </Box>
-                        {start === true ? <Navigate to='/game-room' state={data} replace={true}/> : null}
-                    </div>
-                </div>
-            </div>
-            }
+                }
 
-            <Button variant="contained" onClick={() => {
-                setRoomId(uuidV4());
-                setIsFirst(true);
-                setCreateRoom(true);
-            }}>
-                Create room
-            </Button>
-
-            <Button variant="text" onClick={() => {setRoomDialogOpen(true);}}>
-                Join room
-            </Button>
-        </Stack>
+                <Button className="sgn-btn" sx = {{color: '#cda88b', backgroundColor: '#202020', "&:hover": {color: '#b28c6e', backgroundColor: '#191919'}}} variant="text" onClick={() => {
+                    setRoomId(uuidV4());
+                    setIsFirst(true);
+                    setCreateRoom(true);
+                }}>
+                    Create room
+                </Button>
+                <br/>
+                <Button className="sgn-btn" sx = {{color: '#cda88b', backgroundColor: '#202020', "&:hover": {color: '#b28c6e', backgroundColor: '#191919'}}} variant="text" onClick={() => {setRoomDialogOpen(true);}}>
+                    Join room
+                </Button>
+            </Stack>
+        </>
     );
 }

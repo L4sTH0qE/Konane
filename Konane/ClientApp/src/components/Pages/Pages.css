@@ -1,6 +1,13 @@
 .chs-btn {
     bottom: 15px;
-    width: 160px;
+    width: 150px;
+    height: 35px;
+    box-shadow: 0 0 5px #000000;
+}
+
+.chs-btn-2 {
+    bottom: 15px;
+    width: 150px;
     height: 35px;
 }
 
@@ -8,6 +15,7 @@
     bottom: 15px;
     width: 160px;
     height: 35px;
+    box-shadow: 0 0 10px #000000;
 }
 
 .chs-btn-right{
@@ -15,6 +23,7 @@
     bottom: 15px;
     width: 160px;
     height: 35px;
+    box-shadow: 0 0 10px #000000;
 }
 
 
@@ -34,7 +43,8 @@
     z-index: 2;
     position: absolute;
     padding: 25px;
-    background: white;
+    color: #191919;
+    background: #cda88b;
     border-radius: 16px;
     min-width: 650px;
     white-space: nowrap;
@@ -58,15 +68,57 @@ h3 {
     box-shadow: 0 0 10px #444;
 }
 
-body {
-    background-color: #191919;
-    font-family: 'Pacifico', cursive;
+.play-image {
+    position: absolute;
+    right:5%;
+    top:200px;
+    min-width: 200px;
+    max-width: 500px;
+    border-radius: 50%;
+    box-shadow: 0 0 3px #444;
+    filter: blur(1px) brightness(10%);
 }
 
-p {
-    font-size: 1.1em;
+.bg {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../assets/players.png');
+    background-repeat: no-repeat;
+    background-position: 5px 50px;
+    background-attachment: fixed;
+    -moz-background-size: 100% 100%;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+    overflow: auto;
 }
 
-li {
-    font-size: 1.1em;
+.game-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.game-table th, .game-table td {
+    border: 1px solid #cda88b;
+    padding: 8px;
+    text-align: center;
+    color: #cda88b;
+}
+
+.game-table th {
+    background-color: #202020;
+}
+
+.game-table tr {
+    background-color: #202020;
+}
+
+.game-table-title {
+    text-align: center
+}
+
+.game-info {
+    position: relative;
+    text-align: center;
+    margin-top: 33%;
 }
