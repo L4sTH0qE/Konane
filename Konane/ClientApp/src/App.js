@@ -31,8 +31,8 @@ export default function App(props) {
     async function checkLogInInput(userInput) {
         const json = await getUser(userInput);  // command waits until completion
 
-        if (json === "No user with such ID") {
-            setUserError("No user with such ID");
+        if (json === "No user with such username") {
+            setUserError("No user with such username");
         } else {
             setWins(json.wins);
             setUsername(json.name);
@@ -44,14 +44,14 @@ export default function App(props) {
     async function checkSignUpInput(userInput) {
         const json = await getUser(userInput);  // command waits until completion
 
-        if (json === "No user with such ID") {
+        if (json === "No user with such username") {
             addUser(userInput);
             setWins(0);
             setUsername(userInput);
             setSignUp(false); // close dialog
             setUsernameSubmitted(true); // indicate that username has been submitted
         } else {
-            setUserError("There is a user with such ID");
+            setUserError("There is a user with such username");
         }
     }
 
@@ -71,7 +71,7 @@ export default function App(props) {
         return fetch('/user/' + name)
             .then((response)=>response.json())
             .then((responseJson)=>{return responseJson})
-            .catch(() => {return "No user with such ID";});
+            .catch(() => {return "No user with such username";});
     }
 
     return (
