@@ -45,7 +45,7 @@ export default function App(props) {
         const json = await getUser(userInput);  // command waits until completion
 
         if (json === "No user with such username") {
-            addUser(userInput);
+            await addUser(userInput);
             setWins(0);
             setUsername(userInput);
             setSignUp(false); // close dialog

@@ -270,7 +270,7 @@ export default function  Game (props) {
 
     async function endGame(currentPlayer) {
         setWinner(currentPlayer === blackPlayer ? whitePlayer : blackPlayer);
-        finishBoard(currentPlayer);
+        await finishBoard(currentPlayer);
         setGameOver(true);
         console.log("GameOver");
     }
