@@ -21,3 +21,7 @@ html {
   width: 40px;
   height: 40px;
 }
+
+.bg-navbar {
+  background: linear-gradient(to bottom, #252525 0, #191919 100%);
+}

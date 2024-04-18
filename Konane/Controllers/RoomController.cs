@@ -51,7 +51,7 @@ namespace Konane.Controllers
                 room.FirstFirstTurn = true;
                 room.SecondFirstTurn = true;
                 _rooms.Create(room);
-            } else if (tmp?.Status == "Waiting" && room.SecondPlayer != "") {
+            } else if (tmp?.Status == "Waiting" && room.SecondPlayer != "" && room.FirstPlayer != "") {
                 room.Status = "Active";
                 room.FirstFirstTurn = true;
                 room.SecondFirstTurn = true;

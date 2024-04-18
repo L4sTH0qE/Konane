@@ -3,7 +3,7 @@ import CellComponent from "./CellComponent";
 
 const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, firstPlayer, secondPlayer, isBot, postBoard, highlight}) => {
     const [selectedCell, setSelectedCell] = useState(null);
-    const [cellsToChoose, setCellsToChoose] = useState(0);
+    const [cellsToChoose, setCellsToChoose] = useState(false);
     const [botTurn , setBotTurn] = useState(true);
     let endFlag = true;
 
@@ -21,7 +21,7 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
                 }
                 if (selectedCell && selectedCell === cell) {
                     setSelectedCell(null);
-                    setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose + 1 : cellsToChoose - 1);
+                    setCellsToChoose(!cellsToChoose);
                     postBoard(false);
                 }
                 if (selectedCell && selectedCell !== cell && selectedCell?._figure?.canMove(cell)) {
@@ -46,7 +46,7 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
                 }
                 if (selectedCell && selectedCell === cell) {
                     setSelectedCell(null);
-                    setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose + 1 : cellsToChoose - 1);
+                    setCellsToChoose(!cellsToChoose);
                 }
                 if (selectedCell && selectedCell !== cell && selectedCell?._figure?.canMove(cell)) {
                     selectedCell.moveFigure(cell);
@@ -118,7 +118,9 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
     }, [currentPlayer]);
 
     useEffect(() => {
-        highlightCellsToChoose();
+        if (isBot) {
+            highlightCellsToChoose();         
+        }
     }, [botTurn]);
     
 
@@ -166,7 +168,9 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
     }, [highlight]);
 
     useEffect(() => {
-        highlightCellsToChoose();
+        if (firstPlayer !== "" && secondPlayer !== "") {
+            highlightCellsToChoose();
+        }
     }, [cellsToChoose]);
 
     useMemo(() => {

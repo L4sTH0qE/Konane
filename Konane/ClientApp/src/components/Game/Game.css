@@ -123,3 +123,8 @@
     height: 45px;
     box-shadow: 0 0 5px #000000;
 }
+
+.current-player {
+    width: 64px;
+    height: 64px;
+}

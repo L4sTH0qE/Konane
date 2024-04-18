@@ -76,7 +76,7 @@ export default function App(props) {
 
     return (
         <>
-            {location.pathname === "/game-options"  && usernameSubmitted ? <div className="bg"></div> : <></>}
+            {location.pathname === "/game-options"  && usernameSubmitted ? <div className="bg"></div> : <div className="bg-main"></div>}
             <Layout>
                 <Routes>
                     <Route key={true} path='/' element={usernameSubmitted ? <Home username={username} wins={wins}/> : <> </>} />;

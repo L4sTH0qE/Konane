@@ -23,7 +23,6 @@ export default function  Game (props) {
     const [gameOver, setGameOver] = useState(false);
     const [redirect, setRedirect] = useState(false);
     const [generate, setGenerate] = useState(false);
-    const [active, setActive] = useState(false);
     const [update, setUpdate] = useState(false);
     const [highlight, setHighlight] = useState(false);
     let winnerFlag = false;
@@ -45,10 +44,17 @@ export default function  Game (props) {
     function createBotRoom() {
         const newBlackPlayer = new Player(Colors.BLACK);
         const newWhitePlayer = new Player(Colors.WHITE);
-        newBlackPlayer._name = props.name;
-        newBlackPlayer._isBot = false;
-        newWhitePlayer._name = "BOT";
-        newWhitePlayer._isBot = true;
+        if (props.isFirst) {
+            newBlackPlayer._name = props.name;
+            newBlackPlayer._isBot = false;
+            newWhitePlayer._name = "BOT";
+            newWhitePlayer._isBot = true;
+        } else {
+            newBlackPlayer._name = "BOT";
+            newBlackPlayer._isBot = true;
+            newWhitePlayer._name = props.name;
+            newWhitePlayer._isBot = false;
+        }
         setBlackPlayer(newBlackPlayer);
         setWhitePlayer(newWhitePlayer);
         setCurrentPlayer(newBlackPlayer);
@@ -61,7 +67,12 @@ export default function  Game (props) {
     async function createRoom() {
         const newBlackPlayer = new Player(Colors.BLACK);
         const newWhitePlayer = new Player(Colors.WHITE);
-        newBlackPlayer._name = props.name;
+        if (props.isFirst) {
+            newBlackPlayer._name = props.name;
+        } else {
+            newWhitePlayer._name = props.name;
+            setUpdate(true);
+        }
         newBlackPlayer._isBot = false;
         newWhitePlayer._isBot = false;
         setBlackPlayer(newBlackPlayer);
@@ -84,23 +95,28 @@ export default function  Game (props) {
         try {
             const response = await fetch('/room/' + roomId);
             const room = await response.json();
+            
             const newBlackPlayer = new Player(Colors.BLACK);
             newBlackPlayer._name = room.firstPlayer;
             newBlackPlayer._isBot = false;
+            newBlackPlayer._isFirstTurn = room.firstFirstTurn;
             const newWhitePlayer = new Player(Colors.WHITE);
+            newWhitePlayer._name = room.secondPlayer;
             newWhitePlayer._isBot = false;
+            newWhitePlayer._isFirstTurn = room.secondFirstTurn;
+            
             if (room.secondPlayer === "" && room.firstPlayer !== props.name) {
                 newWhitePlayer._name = props.name;
-            } else {
-                newWhitePlayer._name = room.secondPlayer;
-                newBlackPlayer._isFirstTurn = room.firstFirstTurn;
-                newWhitePlayer._isFirstTurn = room.secondFirstTurn;
+            } else if (room.firstPlayer === "" && room.secondPlayer !== props.name) {
+                newBlackPlayer._name = props.name;
             }
             setBlackPlayer(newBlackPlayer);
             setWhitePlayer(newWhitePlayer);
 
-            room.currentPlayer === newBlackPlayer._name ? setCurrentPlayer(newBlackPlayer) : setCurrentPlayer(newWhitePlayer);
-
+            room.currentPlayer === room.firstPlayer ? setCurrentPlayer(newBlackPlayer) : setCurrentPlayer(newWhitePlayer);
+            if ((room.currentPlayer === "" && newBlackPlayer._name === props.name) || room.currentPlayer === props.name) {
+                setHighlight(true);
+            }
             const tmp = flatted.parse(room.board);
             const newBoard = new Board(tmp._size);
             for (let i = 0; i < newBoard._size; ++i)
@@ -114,11 +130,11 @@ export default function  Game (props) {
                 }
             }
             setBoard(newBoard);
-            if (room.currentPlayer !== props.name) {
+            if (room.currentPlayer !== props.name && room.currentPlayer !== "") {
                 setUpdate(true);
             }
             console.log("JoinRoom");
-            if(room.status === "Waiting" && newWhitePlayer._name !== "") {
+            if(room.status === "Waiting" && newWhitePlayer._name !== "" && newBlackPlayer._name !== "") {
                 await fetch('/room', {
                     method: 'POST',
                     headers: {
@@ -145,9 +161,8 @@ export default function  Game (props) {
                 }
                 if (whitePlayer._name === "" && room.secondPlayer !== "") {
                     whitePlayer._name = room.secondPlayer;
-                    setActive(true);
+                    setHighlight(true);
                 }
-                setHighlight(true);
                 console.log("UpdatePlayers");
             } catch (error) {
                 console.error('Failed to fetch data:', error);
@@ -161,6 +176,7 @@ export default function  Game (props) {
                 try {
                     const response = await fetch('/room/' + props.roomId);
                     const room = await response.json();
+                    // If the game is over
                     if (room.firstTurnFinished && room.secondTurnFinished) {
                         setWinner(currentPlayer === blackPlayer ? whitePlayer : blackPlayer);
                         setGameOver(true);
@@ -182,6 +198,7 @@ export default function  Game (props) {
                             }
                         }
                     }
+                    
                     const tmp = flatted.parse(room.board);
                     const newBoard = new Board(tmp._size);
                     for (let i = 0; i < newBoard._size; ++i) {
@@ -304,7 +321,7 @@ export default function  Game (props) {
                                 </CardContent>
                             </Card>
                             <h3 className="player-turn white-text">Status: Finished</h3>
-                            <h3 className="player-turn white-text">Players: {blackPlayer._name}{whitePlayer._name === "" ? "" : ","} {whitePlayer._name} {'\u00A0'} Current turn: {currentPlayer._name}{'\u00A0'}{currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
+                            <h3 className="player-turn white-text">Players: {blackPlayer._name}{whitePlayer._name === "" ? "" : ","} {whitePlayer._name} {'\u00A0'} Current turn: {currentPlayer._name}{'\u00A0'}{currentPlayer._color === Colors.WHITE ? <img className="current-player" src={logo_white} alt="white"/> : <img className="current-player" src={logo_black} alt="black"/>}</h3>
                             <div className="game">
                                 <BoardComponent
                                     board={board}
@@ -316,7 +333,6 @@ export default function  Game (props) {
                                     firstPlayer={blackPlayer._name}
                                     secondPlayer={whitePlayer._name}
                                     postBoard={postBoard}
-                                    update={update}
                                     highlight={highlight}
                                     isBot={props.isBot}
                                 />
@@ -336,8 +352,8 @@ export default function  Game (props) {
                                         </Button>}
                                     </CardContent>
                                 </Card>
-                                <h3 className="player-turn white-text">Status: {whitePlayer._name === "" ? "Waiting for a second player..." : "Active"}</h3>
-                                <h3 className="player-turn white-text">Players: {blackPlayer._name}{whitePlayer._name === "" ? "" : ","} {whitePlayer._name} {'\u00A0'} Current turn: {currentPlayer._name}{'\u00A0'}{currentPlayer._color === Colors.WHITE ? <img src={logo_white} alt="white"/> : <img src={logo_black} alt="black"/>}</h3>
+                                <h3 className="player-turn white-text">Status: {whitePlayer._name === "" || blackPlayer._name === "" ? "Waiting for a second player..." : "Active"}</h3>
+                                <h3 className="player-turn white-text">Players: {blackPlayer._name}{whitePlayer._name === "" || blackPlayer._name === "" ? "" : ","} {whitePlayer._name} {'\u00A0'} Current turn: {currentPlayer._name}{'\u00A0'}{currentPlayer._color === Colors.WHITE ? <img className="current-player" src={logo_white} alt="white"/> : <img className="current-player" src={logo_black} alt="black"/>}</h3>
                                 <div className="game">
                                     <BoardComponent
                                         board={board}
@@ -349,7 +365,6 @@ export default function  Game (props) {
                                         firstPlayer={blackPlayer._name}
                                         secondPlayer={whitePlayer._name}
                                         postBoard={postBoard}
-                                        update={update}
                                         highlight={highlight}
                                         isBot={props.isBot}
                                     />

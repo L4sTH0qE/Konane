@@ -5,6 +5,8 @@ import CustomTextField from "../CustomTextField";
 import {Navigate} from "react-router-dom";
 import logo_bot from "../../assets/bot.png";
 import logo_player from "../../assets/player.png";
+import logo_white from "../../assets/checkers_top_white.png";
+import logo_black from "../../assets/checkers_top_black.png";
 const { v4: uuidV4 } = require('uuid');
 
 export default function InitGame(props) {
@@ -20,6 +22,7 @@ export default function InitGame(props) {
     const [data, setData] = useState({roomId: roomId, size: size, bot: bot, isFirst: isFirst});
     const [selectedBtnFirst, setSelectedBtnFirst] = React.useState(2);
     const [selectedBtnSecond, setSelectedBtnSecond] = React.useState(2);
+    const [selectedBtnThird, setSelectedBtnThird] = React.useState(2);
 
     function getRoom(roomId) {
         return fetch('/room/' + roomId)
@@ -34,8 +37,10 @@ export default function InitGame(props) {
             setRoomError("No room with such ID");
         } else if (json.status === "Finished") {
             setRoomError("Room with such ID is closed");
-        } else if (json.status === "Active" && json.firstPlayer !== props.username && json.secondPlayer !== props.username) {
+        } else if (json.status === "Active") {
             setRoomError("Room with such ID is active");
+        } else if (json.status === "Waiting" && (json.firstPlayer === props.username || json.secondPlayer === props.username)) {
+            setRoomError("You have already joined this room");
         } else {
             setData({roomId: roomInput, size: size, bot: bot, isFirst: isFirst});
             setRoomDialogOpen(false); // close dialog
@@ -116,6 +121,20 @@ export default function InitGame(props) {
                                 </Box>
                             </div>
                             <br/>
+                            <h3>Side (black starts first): {isFirst === true ? <img className="gameMode" src={logo_black} alt="Black"/> : <img className="gameMode" src={logo_white} alt="White"/>}</h3>
+                            <div>
+                                <Box textAlign='center' display='flex' justifyContent='space-around'>
+                                    <Button className="chs-btn" sx = {{color: '#cda88b', backgroundColor: selectedBtnThird === 1 ? '#202020' : '#404040', "&:hover": {color: '#b28c6e', backgroundColor: selectedBtnThird === 1 ? '#191919' : '#393939'}}} variant="text" onClick={() => {
+                                        setSelectedBtnThird(1);
+                                        setIsFirst(false);
+                                    }}>White</Button>
+                                    <Button className="chs-btn" sx = {{color: '#cda88b', backgroundColor: selectedBtnThird === 2 ? '#202020' : '#404040', "&:hover": {color: '#b28c6e', backgroundColor: selectedBtnThird === 2 ? '#191919' : '#393939'}}} variant="text" onClick={() => {
+                                        setSelectedBtnThird(2);
+                                        setIsFirst(true);
+                                    }}>Black</Button>
+                                </Box>
+                            </div>
+                            <br/>
                             <br/>
                             <h3></h3>
                             <div>
@@ -133,7 +152,6 @@ export default function InitGame(props) {
 
                 <Button className="sgn-btn" sx = {{color: '#cda88b', backgroundColor: '#202020', "&:hover": {color: '#b28c6e', backgroundColor: '#191919'}}} variant="text" onClick={() => {
                     setRoomId(uuidV4());
-                    setIsFirst(true);
                     setCreateRoom(true);
                 }}>
                     Create room

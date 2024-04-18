@@ -62,6 +62,8 @@ h3 {
 
 .rules-image {
     display: block;
+    width: 36%;
+
     margin-left: auto;
     margin-right: auto;
     border-radius: 10px;
@@ -83,14 +85,19 @@ h3 {
     position: fixed;
     width: 100%;
     height: 100%;
-    background-image: url('../../assets/players.png');
-    background-repeat: no-repeat;
-    background-position: 5px 50px;
-    background-attachment: fixed;
-    -moz-background-size: 100% 100%;
-    -webkit-background-size: 100% 100%;
-    background-size: 100% 100%;
+    background: url('../../assets/players.png') no-repeat fixed 5px 50px / 100% 100%, url('../../assets/pattern.png') repeat fixed 5px 50px / 40% 50%;
     overflow: auto;
+}
+
+.bg-main {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../assets/pattern.png');
+    background-repeat: repeat;
+    background-attachment: fixed;
+    background-size: 40% 50%;
+    z-index: -1;
 }
 
 .game-table {
