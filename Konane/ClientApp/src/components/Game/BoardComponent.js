@@ -59,7 +59,8 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
             }
         }
     }
-
+///
+    //
     function getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
@@ -68,7 +69,7 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
     
     function botMakeTurn() {
         if (currentPlayer._isBot === true) {
-            setCellsToChoose(cellsToChoose % 2 === 0 ? cellsToChoose + 1 : cellsToChoose - 1);
+            setCellsToChoose(!cellsToChoose);
             if (currentPlayer._isFirstTurn === true) {
                 setTimeout(function() {
                     let cells = [];
@@ -96,17 +97,41 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
                             }
                         }
                     }
-                    let cell = cells[getRandomInt(1, cells.length) - 1];
-                    cells = [];
+                    let bestCells = []
+                    let bestValue = 0;
+                    let value = 0;
+                    for (let cell of cells) {
+                        value = 0;
+                        for (let i = 0; i < board._size; ++i) {
+                            for (let j = 0; j < board._size; ++j) {
+                                if (cell?._figure?.canMove(board.getCell(j, i))) {
+                                    value = Math.abs((cell._x - j) + (cell._y - i)) / 2;
+                                    if (value > bestValue) {
+                                        bestValue = value;
+                                        bestCells = [];
+                                        bestCells.push(cell);
+                                    } else if (value === bestValue) {
+                                        bestCells.push(cell);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    let cell = bestCells[getRandomInt(1, bestCells.length) - 1];
+                    let moves = [];
+                    value = 0;
                     for (let i = 0; i < board._size; ++i) {
                         for (let j = 0; j < board._size; ++j) {
                             if (cell?._figure?.canMove(board.getCell(j, i))) {
-                                cells.push(board.getCell(j, i));
+                                value = Math.abs((cell._x - j) + (cell._y - i)) / 2;
+                                if (value === bestValue) {
+                                    moves.push(board.getCell(j, i));
+                                }
                             }
                         }
                     }
                     swapPlayers();
-                    cell.moveFigure(cells[getRandomInt(1, cells.length) - 1]);
+                    cell.moveFigure(moves[getRandomInt(1, moves.length) - 1]);
                     setBotTurn(!botTurn);
                 }, (1000));
             }

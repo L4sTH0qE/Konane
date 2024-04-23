@@ -42,16 +42,20 @@ export default function App(props) {
     }
 
     async function checkSignUpInput(userInput) {
-        const json = await getUser(userInput);  // command waits until completion
-
-        if (json === "No user with such username") {
-            await addUser(userInput);
-            setWins(0);
-            setUsername(userInput);
-            setSignUp(false); // close dialog
-            setUsernameSubmitted(true); // indicate that username has been submitted
+        if (userInput === "BOT") {
+            setUserError("BOT is a prohibited username");
         } else {
-            setUserError("There is a user with such username");
+            const json = await getUser(userInput);  // command waits until completion
+
+            if (json === "No user with such username") {
+                await addUser(userInput);
+                setWins(0);
+                setUsername(userInput);
+                setSignUp(false); // close dialog
+                setUsernameSubmitted(true); // indicate that username has been submitted
+            } else {
+                setUserError("There is a user with such username");
+            }
         }
     }
 

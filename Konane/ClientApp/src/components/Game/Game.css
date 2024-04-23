@@ -98,6 +98,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 1050px;
 }
 
 .myModalContent {
@@ -109,6 +110,7 @@
     border-radius: 16px;
     min-width: 250px;
     white-space: nowrap;
+    top: 500px;
 }
 
 .copy-btn {
