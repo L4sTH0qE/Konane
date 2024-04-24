@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import './NavMenu.css';
 import brand from "../assets/Brand.png";
 
+/**
+ * Class component that describes navigation menu.
+ */
 export class NavMenu extends Component {
   static displayName = NavMenu.name;
 

@@ -1,22 +1,34 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Konane.Controllers
 {
+    /// <summary>
+    /// Describes room controller.
+    /// </summary>
     [ApiController]
     public class RoomController : ControllerBase
     {
+        // Logger.
         private readonly ILogger<RoomController> _logger;
+        // Rooms repository.
         private readonly RoomsRepository _rooms;
 
+        /// <summary>
+        /// Controller constructor.
+        /// </summary>
+        /// <param name="logger"> Room controller logger via dependency injection.</param>
+        /// <param name="rooms"> Rooms repository via dependency injection.</param>
         public RoomController(ILogger<RoomController> logger, RoomsRepository rooms)
         {
             _rooms = rooms;
             _logger = logger;
         }
         
+        /// <summary>
+        /// Method to process HTTP GET request to get all rooms from database.
+        /// </summary>
+        /// <returns>The result of an action with the list of all rooms as its content.</returns>
         [HttpGet]
         [Route("[controller]")]
         public IActionResult Get()
@@ -25,6 +37,11 @@ namespace Konane.Controllers
             return Ok(_rooms.Get());
         }
 
+        /// <summary>
+        /// Method to process HTTP GET request to get room from database by its id.
+        /// </summary>
+        /// <param name="roomId"> Id of the room to get from database.</param>
+        /// <returns>The result of an action with the specified room as its content.</returns>
         [HttpGet]
         [Route("[controller]/{roomId}")]
         public IActionResult Get(string roomId)
@@ -33,6 +50,11 @@ namespace Konane.Controllers
             return Ok(_rooms.Get().Find(x => x.RoomId == roomId));
         }
 
+        /// <summary>
+        /// Method to process HTTP POST request to post room to the database.
+        /// </summary>
+        /// <param name="room"> Room to be created/updated in the database.</param>
+        /// <returns>The result of an action with the specified room as its content.</returns>
         [HttpPost]
         [Route("[controller]")]
         public IActionResult Post([FromBody] Room room)

@@ -3,6 +3,9 @@ import {useLocation} from "react-router-dom";
 import "./Pages.css"
 import Game from "../Game/Game";
 
+/**
+ * Functional component that describes game start.
+ */
 const GameOptions = (props) => {
     const location = useLocation();
 

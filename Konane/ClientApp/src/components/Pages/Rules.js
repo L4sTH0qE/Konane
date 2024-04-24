@@ -1,6 +1,9 @@
 import React from 'react';
 import konane_board from "../../assets/Konane_board.jpg";
 
+/**
+ * Functional component that describes Rules page.
+ */
 export default function Rules () {
     return (
         <div className="gray-text">

@@ -1,5 +1,8 @@
 namespace Konane
 {
+    /// <summary>
+    /// Describes room model.
+    /// </summary>
     public class Room
     {
         public Guid Id { get; set; }

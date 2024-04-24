@@ -2,15 +2,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Konane;
 
+/// <summary>
+/// Describes rooms repository.
+/// </summary>
 public class RoomsRepository
 {
+    // Database context.
     private readonly ApplicationContext _context;
  
+    /// <summary>
+    /// Repository default constructor.
+    /// </summary>
+    /// <param name="context"> Database context.</param>
     public RoomsRepository(ApplicationContext context)
     {
         _context = context;
     }
  
+    /// <summary>
+    /// Method to get all rooms from database.
+    /// </summary>
+    /// <returns>List of all rooms.</returns>
     public List<Room> Get()
     {
         var roomEntities = _context.Rooms.ToList();
@@ -25,6 +37,10 @@ public class RoomsRepository
         return rooms;
     }
  
+    /// <summary>
+    /// Method to add new room to database.
+    /// </summary>
+    /// <param name="room"> Room to be added to database.</param>
     public void Create(Room room)
     {
         var roomEntity = new RoomEntity
@@ -46,6 +62,9 @@ public class RoomsRepository
         _context.SaveChanges();
     }
     
+    /// <summary>
+    /// Method to update room in database.
+    /// </summary>
     public void Update(string? roomId, string? firstPlayer, string? secondPlayer, string? currentPlayer, string? board, 
         bool firstTurnFinished, bool secondTurnFinished, bool firstFirstTurn, bool secondFirstTurn, string? status) {
         _context.Rooms
@@ -62,6 +81,10 @@ public class RoomsRepository
                 .SetProperty(e => e.Status, e => status));
     }
  
+    /// <summary>
+    /// Method to delete room from database.
+    /// </summary>
+    /// <param name="roomId"> Id of the room to delete from database.</param>
     public void Delete(string? roomId)
     {
         _context.Rooms

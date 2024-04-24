@@ -1,5 +1,8 @@
 namespace Konane
 {
+    /// <summary>
+    /// Describes user model.
+    /// </summary>
     public class User
     {
         public Guid Id { get; set; }

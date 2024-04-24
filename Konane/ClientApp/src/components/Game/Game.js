@@ -14,6 +14,9 @@ import useInterval from "../useInterval";
 
 const flatted = require('flatted');
 
+/**
+ * Functional component that describes gameplay.
+ */
 export default function  Game (props) {
     const [board, setBoard] = useState(null);
     const [whitePlayer, setWhitePlayer] = useState(null);
@@ -41,6 +44,9 @@ export default function  Game (props) {
         }
     }, [generate]);
 
+    /**
+     * Function to create room with bot.
+     */
     function createBotRoom() {
         const newBlackPlayer = new Player(Colors.BLACK);
         const newWhitePlayer = new Player(Colors.WHITE);
@@ -64,6 +70,9 @@ export default function  Game (props) {
         console.log("CreateBotRoom");
     }
 
+    /**
+     * Function to create room with player.
+     */
     async function createRoom() {
         const newBlackPlayer = new Player(Colors.BLACK);
         const newWhitePlayer = new Player(Colors.WHITE);
@@ -91,6 +100,10 @@ export default function  Game (props) {
         console.log("CreateRoom");
     }
 
+    /**
+     * Function to join room by its id.
+     * @param roomId - Room id
+     */
     async function joinRoom(roomId) {
         try {
             const response = await fetch('/room/' + roomId);
@@ -151,6 +164,9 @@ export default function  Game (props) {
         }
     }
 
+    /**
+     * Function to update players.
+     */
     async function updatePlayers() {
         if (!props.isBot) {
             try {
@@ -170,6 +186,9 @@ export default function  Game (props) {
         }
     }
 
+    /**
+     * Function to update board.
+     */
     async function updateBoard() {
         if (!gameOver && !props.isBot) {
             if (currentPlayer._name !== props.name && update) {
@@ -233,6 +252,10 @@ export default function  Game (props) {
         }
     }
 
+    /**
+     * Function to send Room HTTP POST request with updated board.
+     * @param turnFinished - Has the player finished his turn
+     */
     async function postBoard(turnFinished) {
         if (!props.isBot) {
             await fetch('/room', {
@@ -258,6 +281,9 @@ export default function  Game (props) {
         }
     }
 
+    /**
+     * Function to send Room HTTP POST request with updated board when the game is over.
+     */
     async function finishBoard() {
         if (!props.isBot) {
             await fetch('/room', {
@@ -281,10 +307,17 @@ export default function  Game (props) {
 
     useInterval(() => {(blackPlayer._name === "" || whitePlayer._name === "") ? updatePlayers() : updateBoard() }, 1000)
 
+    /**
+     * Function to swap players.
+     */
     function swapPlayers() {
         setCurrentPlayer(currentPlayer._color === Colors.WHITE ? blackPlayer : whitePlayer);
     }
 
+    /**
+     * Function to set game over state.
+     * @param currentPlayer - Loser
+     */
     async function endGame(currentPlayer) {
         setWinner(currentPlayer === blackPlayer ? whitePlayer : blackPlayer);
         await finishBoard(currentPlayer);

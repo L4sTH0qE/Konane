@@ -1,3 +1,6 @@
+/**
+ * Class that describes Cell model.
+ */
 export class Cell {
     constructor(board, x, y, color, figure)
     {

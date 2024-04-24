@@ -9,6 +9,9 @@ import logo_white from "../../assets/checkers_top_white.png";
 import logo_black from "../../assets/checkers_top_black.png";
 const { v4: uuidV4 } = require('uuid');
 
+/**
+ * Functional component that describes Play page.
+ */
 export default function InitGame(props) {
     const [roomDialogOpen, setRoomDialogOpen] = useState(false);
     const [roomInput, setRoomInput] = useState("");
@@ -24,6 +27,10 @@ export default function InitGame(props) {
     const [selectedBtnSecond, setSelectedBtnSecond] = React.useState(2);
     const [selectedBtnThird, setSelectedBtnThird] = React.useState(2);
 
+    /**
+     * Function to send Room HTTP GET request.
+     * @param {string} roomId - Id of the room to get
+     */
     function getRoom(roomId) {
         return fetch('/room/' + roomId)
             .then((response)=>response.json())
@@ -31,6 +38,10 @@ export default function InitGame(props) {
             .catch(() => {return "No room with such ID";});
     }
 
+    /**
+     * Function to check room input for joining the game session.
+     * @param {string} roomInput - Room Input
+     */
     async function checkRoomInput(roomInput) {
         const json = await getRoom(roomInput);  // command waits until completion
         if (json === "No room with such ID") {

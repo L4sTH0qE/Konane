@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import useInterval from "../useInterval";
 
+/**
+ * Functional component that describes Home page.
+ */
 export default function Home (props) {
     const [username, setUsername] = useState("");
     const [wins, setWins] = useState(0);
@@ -10,6 +13,9 @@ export default function Home (props) {
         setWins(props.wins);
     }, [props.username]);
 
+    /**
+     * Function to update total number of user victories.
+     */
     async function updateWins() {
         try {
             const response = await fetch('/user/' + username);
@@ -24,7 +30,7 @@ export default function Home (props) {
         }
     }
 
-    useInterval(() => updateWins(), 3000)
+    useInterval(() => updateWins(), 5000)
 
     return (
         <>

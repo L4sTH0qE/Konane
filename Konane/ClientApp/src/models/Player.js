@@ -1,3 +1,6 @@
+/**
+ * Class that describes Player model.
+ */
 export class Player {
     constructor(color) {
         this._color = color;

@@ -1,4 +1,8 @@
 import {Colors} from "./Colors"
+
+/**
+ * Class that describes Figure model.
+ */
 export class Figure {
     constructor(color, cell)
     {

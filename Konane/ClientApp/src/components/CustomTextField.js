@@ -1,6 +1,9 @@
 import {TextField} from "@mui/material";
 import {withStyles} from "@mui/styles";
 
+/**
+ * Style for custom text field.
+ */
 const CustomTextField = withStyles({
     root: {
         '& label.Mui-focused': {

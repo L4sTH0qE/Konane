@@ -3,6 +3,9 @@ import {Colors} from "../../models/Colors";
 import logo_white from "../../assets/checkers_top_white.png"
 import logo_black from "../../assets/checkers_top_black.png"
 
+/**
+ * Functional component that describes cell of the board.
+ */
 const CellComponent = ({cell, selected, click}) => {
     return (
         <div

@@ -6,6 +6,9 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import "../custom.css";
 
+/**
+ * Functional component that describes custom modal dialog.
+ */
 const CustomDialog = ({ open, children, title, contentText, handleContinue }) => {
     return (
         <Dialog open={open}>

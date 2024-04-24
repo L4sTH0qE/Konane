@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Konane
 {
+    /// <summary>
+    /// Program class.
+    /// </summary>
     public class Program
     {
         public static void Main(string[] args)

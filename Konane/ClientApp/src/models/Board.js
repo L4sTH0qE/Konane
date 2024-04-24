@@ -2,6 +2,9 @@ import {Cell} from "./Cell";
 import {Colors} from "./Colors";
 import {Figure} from "./Figure";
 
+/**
+ * Class that describes Board model.
+ */
 export class Board {
     constructor(size)
     {

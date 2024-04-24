@@ -28,6 +28,10 @@ export default function App(props) {
         }
     }, []);
 
+    /**
+     * Function to check user input for logging in.
+     * @param {string} userInput - User Input
+     */
     async function checkLogInInput(userInput) {
         const json = await getUser(userInput);  // command waits until completion
 
@@ -41,6 +45,10 @@ export default function App(props) {
         }
     }
 
+    /**
+     * Function to check user input for signing up.
+     * @param {string} userInput - User Input
+     */
     async function checkSignUpInput(userInput) {
         if (userInput === "BOT") {
             setUserError("BOT is a prohibited username");
@@ -59,6 +67,10 @@ export default function App(props) {
         }
     }
 
+    /**
+     * Function to send User HTTP POST request.
+     * @param {string} name - User name
+     */
     async function addUser(name) {
         await fetch('/user', {
             method: 'POST',
@@ -70,6 +82,10 @@ export default function App(props) {
         console.log("UserPost");
     }
 
+    /**
+     * Function to send User HTTP GET request.
+     * @param {string} name - User name
+     */
     function getUser(name) {
         console.log("UserGet");
         return fetch('/user/' + name)
@@ -129,7 +145,7 @@ export default function App(props) {
                             </CustomDialog>
                             <CustomDialog
                                 open={signUp} // leave open if username has not been selected
-                                title="Enter a username" // Title of dialog
+                                title="Enter a username" // title of dialog
                                 contentText="Not a member" // content text of dialog
                                 handleContinue={() => { // fired when continue is clicked
                                     if (!username) return; // if username hasn't been entered, do nothing

@@ -1,5 +1,8 @@
 namespace Konane
 {
+    /// <summary>
+    /// Describes room entity.
+    /// </summary>
     public class RoomEntity
     {
         public Guid Id { get; set; }

@@ -1,12 +1,19 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import CellComponent from "./CellComponent";
 
+/**
+ * Functional component that describes board.
+ */
 const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, name, firstPlayer, secondPlayer, isBot, postBoard, highlight}) => {
     const [selectedCell, setSelectedCell] = useState(null);
     const [cellsToChoose, setCellsToChoose] = useState(false);
     const [botTurn , setBotTurn] = useState(true);
     let endFlag = true;
 
+    /**
+     * Function to update board state by click event.
+     * @param cell - Clicked cell
+     */
     function click(cell) {
         console.log("click!");
         if (!isBot) {
@@ -59,14 +66,22 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
             }
         }
     }
-///
-    //
+
+    /**
+     * Function to get random integer value.
+     * @param min - min border
+     * @param max - max border
+     * @returns {number} random integer value
+     */
     function getRandomInt(min, max) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    
+
+    /**
+     * Function to make bot turn.
+     */
     function botMakeTurn() {
         if (currentPlayer._isBot === true) {
             setCellsToChoose(!cellsToChoose);
@@ -147,8 +162,10 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
             highlightCellsToChoose();         
         }
     }, [botTurn]);
-    
 
+    /**
+     * Function to highlight cells available to choose from.
+     */
     function highlightCellsToChoose() {
         if (typeof board.highlightCellsToChoose === 'function') {
             console.log("highlight cells");
@@ -163,6 +180,10 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
             }
         }
     }
+
+    /**
+     * Function to highlight cells available to move to.
+     */
     function highlightCellsToMove() {
         if (typeof board.highlightCellsToMove === 'function') {
             board.highlightCellsToMove(selectedCell);
@@ -170,6 +191,9 @@ const BoardComponent = ({board, setBoard, currentPlayer, swapPlayers, endGame, n
         }
     }
 
+    /**
+     * Function to update board.
+     */
     function updateBoard() {
         if (typeof board.getCopyBoard === 'function' && typeof setBoard === 'function') {
             const newBoard = board.getCopyBoard();
