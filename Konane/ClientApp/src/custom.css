@@ -1,0 +1,51 @@
+.light-text {
+  color: #f0f0f0;
+}
+
+.white-text {
+  color: #cda88b;
+}
+
+.gray-text {
+  color: #909090;
+}
+
+body {
+  background-color: #191919;
+  font-family: 'Pacifico', cursive;
+}
+
+p {
+  font-size: 1.1em;
+}
+
+li {
+  font-size: 1.1em;
+}
+
+.start-text {
+  margin-top: 100px;
+  margin-left: 50px;
+  float: left;
+}
+
+.start-image {
+  padding-top: 0;
+  width: 852px;
+  height: 640px;
+  float: right;
+  filter: brightness(80%);
+}
+
+.start-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sgn-btn {
+  bottom: 15px;
+  width: 160px;
+  height: 45px;
+  box-shadow: 0 0 10px #000000;
+}
